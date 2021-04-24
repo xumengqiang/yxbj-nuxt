@@ -1,3 +1,6 @@
+import config from './config'
+// eslint-disable-next-line nuxt/no-cjs-in-config
+const path = require('path')
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -22,7 +25,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '@/plugins/element-ui'
+    '@/plugins/element-ui',
+    '@/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -41,10 +45,22 @@ export default {
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: config.host + config.prefix,
+    browserBaseURL: config.prefix,
+    proxy: config.proxy
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: [/^element-ui/]
+    transpile: [/^element-ui/],
+    /*
+    ** You can extend webpack config here
+    */
+    extend (config, ctx) {
+      config.resolve.alias.api = path.resolve(__dirname, 'api')
+      config.resolve.alias.utils = path.resolve(__dirname, 'utils')
+      config.resolve.alias.plugins = path.resolve(__dirname, 'plugins')
+    }
   }
 }
