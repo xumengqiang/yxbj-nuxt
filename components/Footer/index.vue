@@ -11,7 +11,7 @@ export default {
   name: 'Footer'
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .footer {
     background: #fff;
     height: 50px;

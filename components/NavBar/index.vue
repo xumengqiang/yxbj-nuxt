@@ -5,36 +5,36 @@
         <img :src="logo">
       </div>
       <ul>
-        <router-link
+        <nuxt-link
           to="/"
           tag="li"
         >
           首页
-        </router-link>
-        <router-link
+        </nuxt-link>
+        <nuxt-link
           to="/technology"
           tag="li"
         >
           优秀笔记
-        </router-link>
-        <router-link
+        </nuxt-link>
+        <nuxt-link
           to="/doc"
           tag="li"
         >
           优秀文档
-        </router-link>
-        <router-link
+        </nuxt-link>
+        <nuxt-link
           to="/link"
           tag="li"
         >
           优秀友链
-        </router-link>
-        <router-link
+        </nuxt-link>
+        <nuxt-link
           to="/about"
           tag="li"
         >
           关于博主
-        </router-link>
+        </nuxt-link>
         <el-dropdown
           v-if="token"
           trigger="click"
@@ -47,28 +47,28 @@
           </div>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <router-link
+              <nuxt-link
                 to="/editor"
                 tag="li"
               >
                 新建普通文章
-              </router-link>
+              </nuxt-link>
             </el-dropdown-item>
             <el-dropdown-item>
-              <router-link
+              <nuxt-link
                 to="/markdown"
                 tag="li"
               >
                 新建Markdown
-              </router-link>
+              </nuxt-link>
             </el-dropdown-item>
             <el-dropdown-item>
-              <router-link
+              <nuxt-link
                 to="/mine/personal"
                 tag="li"
               >
                 个人主页
-              </router-link>
+              </nuxt-link>
             </el-dropdown-item>
             <el-dropdown-item
               divided
@@ -126,7 +126,7 @@ export default {
   }
 }
 </script>
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .headers {
     background: #fff;
     height: 60px;
@@ -181,10 +181,10 @@ export default {
                 font-weight: bold;
                 font-size: 15px;
             }
-            .router-link-exact-active {
+            .nuxt-link-exact-active {
                 color: #00a8ff;
             }
-            .router-link-exact-active:after {
+            .nuxt-link-exact-active:after {
                 display: block;
                 content: "";
                 width: 50px;

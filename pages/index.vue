@@ -1,72 +1,122 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        demo
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          {{ res }}
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+    <div class="body">
+        <div class="body-lf">
+            <div class="nav-swiper">
+                <el-carousel
+                    :interval="5000"
+                    trigger="click"
+                    height="330px"
+                    :loop="true"
+                >
+                    <el-carousel-item
+                        v-for="(item, index) in swiperList"
+                        :key="index"
+                    >
+                        <img
+                            class="swiper-img"
+                            :src="item.url"
+                            @click="ChangeLink(item.link)"
+                        />
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
+            <div class="content">
+                <h3 class="content-title">#最近更新</h3>
+                <ArticleItem
+                    v-for="item in list"
+                    :item="item"
+                    :key="item.id"
+                ></ArticleItem>
+            </div>
+        </div>
+        <div class="body-rg">
+            <div class="clock">
+                <Clock></Clock>
+            </div>
+            <div class="pig">
+                <Pig></Pig>
+            </div>
+            <div class="whater">
+                <Weather></Weather>
+            </div>
+            <div class="wechat">
+                <Wechat :status="1"></Wechat>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
-
 <script>
-import { HomeSwiper } from 'api/swiper'
+import { newArticleLimit } from "api/article";
+import { HomeSwiper } from "api/swiper";
 export default {
-  async asyncData () {
-    const res = await HomeSwiper()
-    return { res }
-  }
-}
+    name: "Home",
+    async asyncData() {
+        const result = await Promise.all([
+            HomeSwiper(),
+            newArticleLimit({ limit: 10 }),
+        ]);
+        return { swiperList: result[0].data || [], list: result[1].data || [] };
+    },
+    methods: {
+        //跳转链接
+        ChangeLink(link) {
+            if (link.indexOf("http") >= 0) {
+                window.open(link, "_blank");
+            }
+        },
+    },
+};
 </script>
-
-<style>
-.container {
-    margin: 0 auto;
-    min-height: 100vh;
+<style lang="scss" scoped>
+.body {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-.title {
-    font-family: "Quicksand", "Source Sans Pro", -apple-system,
-        BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-        sans-serif;
-    display: block;
-    font-weight: 300;
-    font-size: 100px;
-    color: #35495e;
-    letter-spacing: 1px;
-}
-
-.subtitle {
-    font-weight: 300;
-    font-size: 42px;
-    color: #526488;
-    word-spacing: 5px;
-    padding-bottom: 15px;
-}
-
-.links {
-    padding-top: 15px;
+    .body-lf {
+        margin-right: 15px;
+        width: 885px;
+        .nav-swiper {
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            .el-carousel__item {
+                border-radius: 4px;
+                .swiper-img {
+                    width: 100%;
+                    border-radius: 4px;
+                }
+            }
+        }
+        .content {
+            margin-top: 15px;
+            display: flex;
+            border-radius: 4px;
+            flex-direction: column;
+            background-color: #fff;
+            .content-title {
+                padding: 10px;
+                color: rgb(51, 51, 51);
+            }
+        }
+    }
+    .body-rg {
+        width: 300px;
+        .clock {
+            height: 300px;
+            margin-bottom: 15px;
+        }
+        .pig {
+            margin-bottom: 15px;
+        }
+        .whater {
+            position: sticky;
+            top: 70px;
+            height: 350px;
+            margin-bottom: 15px;
+        }
+        .wechat {
+            position: sticky;
+            top: 435px;
+            height: 141px;
+        }
+    }
 }
 </style>
