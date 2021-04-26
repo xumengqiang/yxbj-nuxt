@@ -5,12 +5,29 @@
       <Nuxt />
     </div>
     <Footer />
+    <Login
+      v-if="showLogin"
+      @close="changeClose"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Default'
+  name: 'Default',
+  computed: {
+    showLogin () {
+      return this.$store.state.settings.showLogin
+    }
+  },
+  methods: {
+    changeClose () {
+      this.$store.dispatch('settings/changeSetting', {
+        key: 'showLogin',
+        value: false
+      })
+    }
+  }
 }
 </script>
 <style lang="less" scoped>

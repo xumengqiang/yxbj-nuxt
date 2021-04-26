@@ -1,12 +1,18 @@
-// import qs from 'qs'
+import qs from 'qs'
+import { getToken } from 'utils/auth'
 
 // eslint-disable-next-line import/no-mutable-exports
 let axios = null
 
-export default ({ $axios, redirect }) => {
+export default ({ $axios, redirect, store }) => {
   axios = $axios
   $axios.onRequest((config) => {
-    // if (config.method === 'post') { config.data = qs.stringify(config.data) }
+    if (config.method !== 'get') { config.data = qs.stringify(config.data) }
+
+    if (getToken()) {
+      config.headers.authorization = `Bearer ${getToken()}`
+    }
+
     // eslint-disable-next-line no-console
     console.log('Making request to ' + config.url)
     return config

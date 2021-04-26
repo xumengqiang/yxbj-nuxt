@@ -70,49 +70,27 @@ export default {
   data () {
     return {
       navCurrent: 0,
-      // cateList: [],
-      // list: [],
-      // asideList: [],
       listQuery: {
         pageIndex: 1,
         pageSize: 10,
         cateId: ''
-      },
-      total: 0
+      }
     }
   },
-  created () {
-    // this.getAllCate();
-    // this.getCateArticle();
-    // this.getNewArticleList();
-  },
   methods: {
-    // getAllCate() {
-    //     homeCateAll().then((res) => {
-    //         this.cateList = [{ cateName: "全部", id: "" }, ...res.data];
-    //     });
-    // },
     getCateArticle () {
       cateArticle(this.listQuery)
         .then((res) => {
           this.list = res.data.rows
           this.total = res.data.count
         })
-        .catch(err => console.log(err))
     },
     ChangeCate (i) {
       this.navCurrent = i
+      this.listQuery.pageIndex = 1
       this.listQuery.cateId = this.cateList[i].id
       this.getCateArticle()
     }
-    // 获取热门文章
-    // getNewArticleList() {
-    //     ViewsArticleLimit({ limit: 5 })
-    //         .then((res) => {
-    //             this.asideList = res.data;
-    //         })
-    //         .catch((err) => console.log(err));
-    // },
   }
 }
 </script>

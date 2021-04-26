@@ -13,13 +13,19 @@
         </div>
       </div>
       <nuxt-link
+        v-slot="{href, navigate }"
         :to="`/article/${item.id}`"
         target="_blank"
-        tag="a"
+        custom
       >
-        <h4 class="home-h4">
-          {{ item.title }}
-        </h4>
+        <a
+          :href="href"
+          @click="navigate"
+        >
+          <h4 class="home-h4">
+            {{ item.title }}
+          </h4>
+        </a>
       </nuxt-link>
       <p class="info_intr">
         {{ item.describe }}

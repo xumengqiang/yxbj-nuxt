@@ -17,7 +17,9 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
+  router: {
+    middleware: 'permission'
+  },
   loading: {
     color: '#00a8ff',
     height: '3px'

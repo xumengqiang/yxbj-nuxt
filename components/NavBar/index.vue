@@ -6,34 +6,58 @@
       </div>
       <ul>
         <nuxt-link
+          v-slot="{navigate,isExactActive }"
+          custom
           to="/"
-          tag="li"
         >
-          首页
+          <li
+            :class="[ isExactActive && 'nuxt-link-exact-active']"
+            @click="navigate"
+          >
+            首页
+          </li>
         </nuxt-link>
         <nuxt-link
+          v-slot="{ navigate,isActive }"
           to="/technology"
-          tag="li"
+          custom
         >
-          优秀笔记
+          <li
+            :class="[isActive && 'nuxt-link-exact-active' ]"
+            @click="navigate"
+          >
+            优秀笔记
+          </li>
         </nuxt-link>
         <nuxt-link
+          v-slot="{ navigate,isActive }"
           to="/doc"
-          tag="li"
+          custom
         >
-          优秀文档
+          <li
+            :class="[isActive && 'nuxt-link-exact-active' ]"
+            @click="navigate"
+          >
+            优秀文档
+          </li>
         </nuxt-link>
         <nuxt-link
+          v-slot="{ navigate,isActive }"
           to="/link"
-          tag="li"
+          custom
         >
-          优秀友链
+          <li :class="[isActive && 'nuxt-link-exact-active' ]" @click="navigate">
+            优秀友链
+          </li>
         </nuxt-link>
         <nuxt-link
+          v-slot="{ navigate,isActive }"
           to="/about"
-          tag="li"
+          custom
         >
-          关于博主
+          <li :class="[isActive && 'nuxt-link-exact-active' ]" @click="navigate">
+            关于博主
+          </li>
         </nuxt-link>
         <el-dropdown
           v-if="token"
@@ -48,26 +72,35 @@
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
               <nuxt-link
+                v-slot="{ navigate }"
                 to="/editor"
-                tag="li"
+                custom
               >
-                新建普通文章
+                <li @click="navigate">
+                  新建普通文章
+                </li>
               </nuxt-link>
             </el-dropdown-item>
             <el-dropdown-item>
               <nuxt-link
+                v-slot="{ navigate }"
                 to="/markdown"
-                tag="li"
+                custom
               >
-                新建Markdown
+                <li @click="navigate">
+                  新建Markdown
+                </li>
               </nuxt-link>
             </el-dropdown-item>
             <el-dropdown-item>
               <nuxt-link
+                v-slot="{ navigate }"
                 to="/mine/personal"
-                tag="li"
+                custom
               >
-                个人主页
+                <li @click="navigate">
+                  个人主页
+                </li>
               </nuxt-link>
             </el-dropdown-item>
             <el-dropdown-item
@@ -94,18 +127,16 @@ export default {
   data () {
     return {
       circleUrl: require('@/assets/head-bd.png'),
-      logo: require('@/assets/logo.png'),
-      token: false,
-      info: {}
+      logo: require('@/assets/logo.png')
     }
   },
   computed: {
-    // token () {
-    //   return this.$store.getters.token
-    // },
-    // info () {
-    //   return this.$store.getters.info
-    // }
+    token () {
+      return this.$store.state.user.token
+    },
+    info () {
+      return this.$store.state.user.info || {}
+    }
   },
   mounted () {
     document.querySelector('.headers').onselectstart = () => {

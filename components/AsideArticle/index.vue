@@ -4,10 +4,15 @@
       <img :src="item.cover" lazy="loaded">
     </div>
     <div class="item_info">
-      <nuxt-link :to="`/article/${item.id}`" target="_blank" tag="a">
-        <h4 class="item-title">
-          {{ item.title }}
-        </h4>
+      <nuxt-link v-slot="{href, navigate }" :to="`/article/${item.id}`" target="_blank" custom>
+        <a
+          :href="href"
+          @click="navigate"
+        >
+          <h4 class="item-title">
+            {{ item.title }}
+          </h4>
+        </a>
       </nuxt-link>
       <p v-if="item.cate" class="item-p">
         {{ item.cate.cateName }} <span>浏览 {{ item.views }}</span>
