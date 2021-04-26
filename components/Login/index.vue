@@ -91,9 +91,9 @@
   </div>
 </template>
 <script>
-import { validEmail } from '@/utils/validate'
-import { wxcodeUrl } from '@/api/user'
-import { setToken } from '@/utils/auth'
+import { validEmail } from 'utils/validate'
+import { wxcodeUrl } from 'api/user'
+import { setToken } from 'utils/auth'
 export default {
   name: 'Login',
   data () {
@@ -197,7 +197,7 @@ export default {
         if (valid) {
           this.loading = true
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('login', this.loginForm)
             .then(() => {
               location.reload()
               this.$notify({
@@ -248,7 +248,7 @@ export default {
         },
         // 登录成功，保存获得的 token
         SUCCESS: (res) => {
-          this.$store.commit('user/SET_TOKEN', res.data.token)
+          this.$store.commit('SET_TOKEN', res.data.token)
           setToken(res.data.token)
           location.reload()
           this.$notify({

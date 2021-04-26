@@ -17,9 +17,9 @@ export default ({ next, route, store }) => {
   ] // 不重定向白名单
   // 用户登录的时候
   if (getToken()) {
-    store.commit('user/SET_TOKEN', getToken())
+    // store.commit('SET_TOKEN', getToken())
     // 请求申请个人信息接口 => 当有Token的时候
-    store.dispatch('user/getInfo')
+    store.dispatch('getInfo')
   } else {
     // 未登录访问非白名单的时候
     // eslint-disable-next-line no-lonely-if
