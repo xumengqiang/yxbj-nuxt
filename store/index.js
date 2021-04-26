@@ -49,8 +49,9 @@ export const actions = {
     getInfo({ commit }) {
         return new Promise((resolve, reject) => {
             getInfo().then((response) => {
+                console.log(response)
                 const { data } = response
-                commit('SET_ROLES', data.roles || [])
+                // commit('SET_ROLES', data.roles || [])
                 commit('SET_USERINFO', data)
                 resolve(data)
             }).catch((error) => {
@@ -78,13 +79,14 @@ export const actions = {
             resolve()
         })
     },
-    nuxtServerInit({ commit }, { req }) {
+    async nuxtServerInit({ commit }, { req, store }) {
 
         if (req.headers['cookie']) {
 
             let token = cookieparser.parse(req.headers['cookie'])['YXBJ-token']; //格式化setCookies
 
             if (token) {
+                await store.dispatch('getInfo')
                 commit('SET_TOKEN', token);
                 setToken(token)
             }
