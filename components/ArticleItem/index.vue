@@ -1,45 +1,62 @@
 <template>
-    <div class="content-item">
-        <div class="item_info">
-            <div class="item_type">
-                <div class="item_type-cate">#</div>
-                <div v-if="item.cate" class="item_type-title">
-                    {{ item.cate.cateName }}
-                </div>
-            </div>
-            <nuxt-link :to="`/article/${item.id}`" target="_blank" tag="a">
-                <h4 class="home-h4">
-                    {{ item.title }}
-                </h4>
-            </nuxt-link>
-            <p class="info_intr">
-                {{ item.describe }}
-            </p>
-            <div class="info_msg">
-                <span>{{ item.createdAt | formatTime }}</span>
-                浏览 {{ item.views }}
-            </div>
+  <div class="content-item">
+    <div class="item_info">
+      <div class="item_type">
+        <div class="item_type-cate">
+          #
         </div>
-        <div class="item_img" v-if="item.cover">
-            <img :src="item.cover" />
+        <div
+          v-if="item.cate"
+          class="item_type-title"
+        >
+          {{ item.cate.cateName }}
         </div>
+      </div>
+      <nuxt-link
+        :to="`/article/${item.id}`"
+        target="_blank"
+        tag="a"
+      >
+        <h4 class="home-h4">
+          {{ item.title }}
+        </h4>
+      </nuxt-link>
+      <p class="info_intr">
+        {{ item.describe }}
+      </p>
+      <div class="info_msg">
+        <span>{{ item.createdAt | formatTime }}</span>
+        浏览 {{ item.views }}
+      </div>
     </div>
+    <div
+      v-if="item.cover"
+      class="item_img"
+    >
+      <img :src="item.cover">
+    </div>
+  </div>
 </template>
 <script>
-import util from "utils/util";
+import util from 'utils/util'
 export default {
-    name: "ArticleItem",
-    props: {
-        item: {},
-    },
-    filters: {
-        formatTime(time) {
-            return util.formatTime(time);
-        },
-    },
-};
+  name: 'ArticleItem',
+  filters: {
+    formatTime (time) {
+      return util.formatTime(time)
+    }
+  },
+  props: {
+    item: {
+      type: Object,
+      default () {
+        return {}
+      }
+    }
+  }
+}
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .content-item {
     height: 160px;
     border-bottom: 1px solid #eee;

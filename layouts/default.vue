@@ -1,19 +1,19 @@
 <template>
-    <div class="base">
-        <NavBar />
-        <div class="main">
-            <Nuxt />
-        </div>
-        <Footer />
+  <div class="base">
+    <NavBar />
+    <div class="main">
+      <Nuxt />
     </div>
+    <Footer />
+  </div>
 </template>
 
 <script>
 export default {
-    name: "Default",
-};
+  name: 'Default'
+}
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .base {
     width: 100%;
     height: 100%;

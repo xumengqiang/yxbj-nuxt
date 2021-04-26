@@ -1,120 +1,122 @@
 <template>
-    <div class="body">
-        <div class="body-lf">
-            <div class="cate">
-                <div class="tab">
-                    <ul class="tab-ul">
-                        <li
-                            v-for="(item, index) in cateList"
-                            :key="index"
-                            @click="ChangeCate(index)"
-                        >
-                            <a :class="{ active: index == navCurrent }">{{
-                                item.cateName
-                            }}</a>
-                        </li>
-                    </ul>
-                </div>
-                <ArticleItem
-                    v-for="item in list"
-                    :item="item"
-                    :key="item.id"
-                ></ArticleItem>
-                <div class="page">
-                    <Pagination
-                        v-show="total > 0"
-                        :total="total"
-                        :page.sync="listQuery.pageIndex"
-                        :limit.sync="listQuery.pageSize"
-                        @pagination="getCateArticle"
-                    ></Pagination>
-                </div>
-            </div>
+  <div class="body">
+    <div class="body-lf">
+      <div class="cate">
+        <div class="tab">
+          <ul class="tab-ul">
+            <li
+              v-for="(item, index) in cateList"
+              :key="index"
+              @click="ChangeCate(index)"
+            >
+              <a :class="{ active: index == navCurrent }">{{
+                item.cateName
+              }}</a>
+            </li>
+          </ul>
         </div>
-        <div class="body-rg">
-            <div class="sift">
-                <h3 class="sift-title">#精选文章</h3>
-                <AsideArticle
-                    v-for="(item, index) in asideList"
-                    :item="item"
-                    :key="index"
-                ></AsideArticle>
-            </div>
+        <ArticleItem
+          v-for="item in list"
+          :key="item.id"
+          :item="item"
+        />
+        <div class="page">
+          <Pagination
+            v-show="total > 0"
+            :total="total"
+            :page.sync="listQuery.pageIndex"
+            :limit.sync="listQuery.pageSize"
+            @pagination="getCateArticle"
+          />
         </div>
+      </div>
     </div>
+    <div class="body-rg">
+      <div class="sift">
+        <h3 class="sift-title">
+          #精选文章
+        </h3>
+        <AsideArticle
+          v-for="(item, index) in asideList"
+          :key="index"
+          :item="item"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import { homeCateAll } from "api/cate";
-import { cateArticle, ViewsArticleLimit } from "api/article";
+import { homeCateAll } from 'api/cate'
+import { cateArticle, ViewsArticleLimit } from 'api/article'
 export default {
-    name: "technology",
-    async asyncData() {
-        const result = await Promise.all([
-            homeCateAll(),
-            cateArticle({
-                pageIndex: 1,
-                pageSize: 10,
-                cateId: "",
-            }),
-            ViewsArticleLimit({ limit: 5 }),
-        ]);
-        return {
-            cateList: [{ cateName: "全部", id: "" }, ...result[0].data] || [],
-            list: result[1].data.rows || [],
-            total: result[1].data.count || 0,
-            asideList: result[2].data || [],
-        };
+  name: 'Technology',
+  async asyncData () {
+    const result = await Promise.all([
+      homeCateAll(),
+      cateArticle({
+        pageIndex: 1,
+        pageSize: 10,
+        cateId: ''
+      }),
+      ViewsArticleLimit({ limit: 5 })
+    ])
+    return {
+      cateList: [{ cateName: '全部', id: '' }, ...result[0].data] || [],
+      list: result[1].data.rows || [],
+      total: result[1].data.count || 0,
+      asideList: result[2].data || []
+    }
+  },
+  data () {
+    return {
+      navCurrent: 0,
+      // cateList: [],
+      // list: [],
+      // asideList: [],
+      listQuery: {
+        pageIndex: 1,
+        pageSize: 10,
+        cateId: ''
+      },
+      total: 0
+    }
+  },
+  created () {
+    // this.getAllCate();
+    // this.getCateArticle();
+    // this.getNewArticleList();
+  },
+  methods: {
+    // getAllCate() {
+    //     homeCateAll().then((res) => {
+    //         this.cateList = [{ cateName: "全部", id: "" }, ...res.data];
+    //     });
+    // },
+    getCateArticle () {
+      cateArticle(this.listQuery)
+        .then((res) => {
+          this.list = res.data.rows
+          this.total = res.data.count
+        })
+        .catch(err => console.log(err))
     },
-    data() {
-        return {
-            navCurrent: 0,
-            // cateList: [],
-            // list: [],
-            // asideList: [],
-            listQuery: {
-                pageIndex: 1,
-                pageSize: 10,
-                cateId: "",
-            },
-            total: 0,
-        };
-    },
-    created() {
-        // this.getAllCate();
-        // this.getCateArticle();
-        // this.getNewArticleList();
-    },
-    methods: {
-        // getAllCate() {
-        //     homeCateAll().then((res) => {
-        //         this.cateList = [{ cateName: "全部", id: "" }, ...res.data];
-        //     });
-        // },
-        getCateArticle() {
-            cateArticle(this.listQuery)
-                .then((res) => {
-                    this.list = res.data.rows;
-                    this.total = res.data.count;
-                })
-                .catch((err) => console.log(err));
-        },
-        ChangeCate(i) {
-            this.navCurrent = i;
-            this.listQuery.cateId = this.cateList[i].id;
-            this.getCateArticle();
-        },
-        //获取热门文章
-        // getNewArticleList() {
-        //     ViewsArticleLimit({ limit: 5 })
-        //         .then((res) => {
-        //             this.asideList = res.data;
-        //         })
-        //         .catch((err) => console.log(err));
-        // },
-    },
-};
+    ChangeCate (i) {
+      this.navCurrent = i
+      this.listQuery.cateId = this.cateList[i].id
+      this.getCateArticle()
+    }
+    // 获取热门文章
+    // getNewArticleList() {
+    //     ViewsArticleLimit({ limit: 5 })
+    //         .then((res) => {
+    //             this.asideList = res.data;
+    //         })
+    //         .catch((err) => console.log(err));
+    // },
+  }
+}
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .body {
     display: flex;
     justify-content: space-between;

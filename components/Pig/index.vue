@@ -1,60 +1,62 @@
 <template>
-    <div class="main">
-        <div class="title">我的猪</div>
-        <div class="tarager">
-            <div class="love"></div>
-            <img class="gif" src="../../assets/404_images/love.gif" />
-            <div class="lovegrol"></div>
-        </div>
-        <p>{{ msg }}</p>
+  <div class="main">
+    <div class="title">
+      我的猪
     </div>
+    <div class="tarager">
+      <div class="love" />
+      <img class="gif" src="../../assets/404_images/love.gif">
+      <div class="lovegrol" />
+    </div>
+    <p>{{ msg }}</p>
+  </div>
 </template>
 <script>
 export default {
-    data() {
-        return {
-            msg: "",
-            timer: null,
-        };
-    },
-    mounted() {
-        this.timer = setInterval(this.init, 1000);
-    },
-    destroyed() {
-        clearInterval(this.timer);
-    },
-    methods: {
-        init() {
-            let start = "2019-09-22 23:38:00";
-            let diff =
+  data () {
+    return {
+      msg: '',
+      timer: null
+    }
+  },
+  mounted () {
+    this.timer = setInterval(this.init, 1000)
+  },
+  destroyed () {
+    clearInterval(this.timer)
+  },
+  methods: {
+    init () {
+      const start = '2019-09-22 23:38:00'
+      const diff =
                 (new Date().getTime() -
-                    new Date(start.replace(/-/g, "/")).getTime()) /
-                1000;
-            let year = Math.floor(diff / 3600 / 24 / 365);
-            let day = Math.floor((diff - year * 365 * 24 * 3600) / 3600 / 24);
-            let hours = Math.floor(
-                (diff - year * 365 * 24 * 3600 - day * 24 * 3600) / 3600
-            );
-            let mountie = Math.floor(
-                (diff -
+                    new Date(start.replace(/-/g, '/')).getTime()) /
+                1000
+      const year = Math.floor(diff / 3600 / 24 / 365)
+      const day = Math.floor((diff - year * 365 * 24 * 3600) / 3600 / 24)
+      const hours = Math.floor(
+        (diff - year * 365 * 24 * 3600 - day * 24 * 3600) / 3600
+      )
+      const mountie = Math.floor(
+        (diff -
                     year * 365 * 24 * 3600 -
                     day * 24 * 3600 -
                     hours * 3600) /
                     60
-            );
-            let seconds = Math.floor(
-                diff -
+      )
+      const seconds = Math.floor(
+        diff -
                     year * 365 * 24 * 3600 -
                     day * 24 * 3600 -
                     hours * 3600 -
                     mountie * 60
-            );
-            this.msg = `我们相恋了${year}年${day}天${hours}小时${mountie}分钟${seconds}秒啦`;
-        },
-    },
-};
+      )
+      this.msg = `我们相恋了${year}年${day}天${hours}小时${mountie}分钟${seconds}秒啦`
+    }
+  }
+}
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .main {
     background-color: #fff;
     padding: 15px 10px;

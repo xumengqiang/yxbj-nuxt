@@ -126,7 +126,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .headers {
     background: #fff;
     height: 60px;
