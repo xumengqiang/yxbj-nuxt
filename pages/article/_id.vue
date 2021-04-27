@@ -4,6 +4,26 @@
   >
     <div class="body-lf">
       <div class="content-menu article-content">
+        <div class="cotent-head">
+          <h2 class="content-title">
+            {{ article.title }}
+          </h2>
+          <div class="cotent-tag">
+            <i class="el-icon-time" />
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="'发布于' + article.createdAt"
+              placement="top"
+            >
+              <span class="icon-text">{{
+                article.createdAt | formatTime
+              }}</span>
+            </el-tooltip>
+            <i class="el-icon-reading" />
+            <span class="icon-text">{{ article.views }}</span>
+          </div>
+        </div>
         <div
           v-if="article.cover"
           class="content-img"
@@ -21,7 +41,7 @@
           v-html="content"
         />
       </div>
-      <div class="comment-wrap">
+      <div id="child" class="comment-wrap">
         <Comment
           v-model="commentData"
           :user="currentUser || {}"
@@ -32,10 +52,7 @@
           :upload-img="uploadImg"
           :props="props"
         />
-        <div
-          v-if="commentData.length"
-          class="comment-more"
-        >
+        <div v-if="commentData.length" class="comment-more">
           <div
             :class="[
               'comment-more-top',
@@ -53,22 +70,45 @@
           </div>
         </div>
       </div>
+      <div class="article-suspended-panel">
+        <div
+          class="like-adjust with-badge panel-btn"
+          :class="[isArticleLike ? 'like-active' : 'like-btn']"
+          :badge="ArticlelikeCount"
+          @click="Articlelike"
+        />
+        <div
+          class="comment-btn panel-btn comment-adjust with-badge"
+          :badge="commentsTotal"
+          @click="Articlecomment"
+        />
+        <div
+          class="panel-btn"
+          :class="[
+            isArticleCollection ? 'collect-active' : 'collect-btn',
+          ]"
+          @click="collection"
+        />
+        <div class="share-title">
+          分享
+        </div>
+        <div
+          class="wechat-btn share-btn panel-btn"
+          @mouseenter="ChangemouseEnter"
+          @mouseout="mouseOut"
+        />
+        <div v-show="isCodeActive" ref="qrCodeUrl" class="qrcode" />
+      </div>
     </div>
     <div class="body-rg">
       <div class="linkfriends-container">
         <div class="titlebar">
           目录
         </div>
-        <div
-          v-if="toc.length == 0"
-          class="ant-none"
-        >
+        <div v-if="toc.length == 0" class="ant-none">
           该文章暂无目录
         </div>
-        <div
-          v-else
-          class="ant-anchor-wrapper"
-        >
+        <div v-else class="ant-anchor-wrapper">
           <div class="ant-anchor">
             <div class="ant-anchor-ink">
               <span
@@ -108,49 +148,73 @@
           </div>
         </div>
       </div>
-      <div class="wechat">
-        <Wechat :status="2" />
-      </div>
     </div>
   </div>
 </template>
 <script>
-import { articleInfo } from 'api/article'
+import util from 'utils/util'
+import QRCode from 'qrcodejs2'
+import {
+  articleInfo,
+  article_like_Add,
+  article_like_Aarray,
+  article_collection_Aarray,
+  article_collection_Add
+} from 'api/article'
 import throttle from 'utils/throttle'
 import {
-  // eslint-disable-next-line camelcase
   comments_Add,
-  // eslint-disable-next-line camelcase
   comments_Disable,
-  // eslint-disable-next-line camelcase
   reply_add,
-  // eslint-disable-next-line camelcase
   reply_Disable,
-  // eslint-disable-next-line camelcase
   comments_list,
-  // eslint-disable-next-line camelcase
   commentslike_Disable,
-  // eslint-disable-next-line camelcase
   replylike_Disable
 } from 'api/comments'
 import markdown from 'utils/markdown'
+import getCatalog from 'utils/getCatalog'
 export default {
-  name: 'About',
-  async asyncData () {
-    const result = await articleInfo({
-      id: '265c67b0-9b6e-11eb-aff3-094ffeceb988'
-    })
-    // 处理markdown数据，data为markdown文件读出的字符串
-    const artMarked = await markdown.marked(result.data.contentMd)
+  name: 'Article',
+  filters: {
+    formatTime (time) {
+      return util.formatTime(time)
+    }
+  },
+  async asyncData ({ route }) {
+    const result = await articleInfo({ id: route.params.id })
+    let content = ''
+    const toc = ''
+    let artMarked = ''
+    if (result.data.type === 1) {
+      content = result.data.contentText
+      //   this.$nextTick(() => {
+      //   const { noLevels } = getCatalog(this.$refs.content)
+      //   this.articleDetail.toc = noLevels
+      //     this.loading = false
+      //   })
+    } else {
+      // 处理markdown数据，data为markdown文件读出的字符串
+      artMarked = await markdown.marked(result.data.contentMd)
+      //   article.then((response) => {
+      //     this.articleDetail.content = response.content
+      //     this.articleDetail.toc = response.toc
+      //     this.loading = false
+      //   })
+    }
     return {
-      article: result.data || {},
-      content: artMarked.content,
-      toc: artMarked.toc
+      article: result.data,
+      content: content || artMarked.content,
+      toc: toc || artMarked.toc
     }
   },
   data () {
     return {
+      //   article: {}, // 文章详情
       highlightIndex: '', // 文章目标下标
+      articleDetail: {
+        content: '',
+        toc: ''
+      },
       loading: true, // 加载loading
       commentData: [], // 评论数组
       props: {
@@ -167,37 +231,160 @@ export default {
         pageIndex: 1,
         pageSize: 10,
         discuss: 1,
-        articleId: '265c67b0-9b6e-11eb-aff3-094ffeceb988'
+        articleId: this.$route.params.id
       },
       busy: false,
-      articleId: '265c67b0-9b6e-11eb-aff3-094ffeceb988'
+      ArticlelikeCount: 0, // 文章点赞数
+      isArticleLike: false, // 文章点赞
+      isArticleCollection: false, // 文章收藏
+      isCodeActive: false // 二维码
     }
   },
   computed: {
     currentUser () {
-      return this.$store.getters.info
+      return this.$store.state.info
     }
   },
   created () {
-    this.getComments()
+    // this.getArticleInfo()
   },
   mounted () {
     this.$nextTick(function () {
       window.addEventListener('scroll', this.onScroll)
+      const { noLevels } = getCatalog(this.$refs.content)
+      this.toc = noLevels
+      this.creatQrCode()
     })
   },
   destroyed () {
     window.removeEventListener('scroll', this.onScroll)
   },
   methods: {
+    ChangemouseEnter () {
+      this.isCodeActive = true
+    },
+    mouseOut () {
+      this.isCodeActive = false
+    },
+    creatQrCode () {
+      // eslint-disable-next-line no-new
+      new QRCode(this.$refs.qrCodeUrl, {
+        text: `https://m.youxiubiji.com/pages/article/index?id=${this.$route.params.id}`, // 需要转换为二维码的内容
+        width: 96,
+        height: 96,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      })
+    },
+    // 点击评论快捷键，页面滑动底部
+    Articlecomment () {
+      const element = document.getElementById('child')
+      element.scrollIntoViewIfNeeded(false)
+    },
+    // 文章点赞
+    Articlelike () {
+      article_like_Add({
+        articleId: this.$route.params.id
+      })
+        .then(() => {
+          if (this.isArticleLike) {
+            this.isArticleLike = false
+            this.ArticlelikeCount = this.ArticlelikeCount - 1
+            this.$message({
+              message: '取消成功',
+              type: 'warning'
+            })
+          } else {
+            this.isArticleLike = true
+            this.ArticlelikeCount = this.ArticlelikeCount + 1
+            this.$message({
+              message: '点赞成功',
+              type: 'success'
+            })
+          }
+        })
+        .catch(() => {})
+    },
+    // 文章收藏
+    collection () {
+      article_collection_Add({ articleId: this.$route.params.id })
+        .then(() => {
+          if (this.isArticleCollection) {
+            this.isArticleCollection = false
+            this.$message({
+              message: '取消成功',
+              type: 'warning'
+            })
+          } else {
+            this.isArticleCollection = true
+            this.$message({
+              message: '收藏成功',
+              type: 'success'
+            })
+          }
+        })
+        .catch(() => {})
+    },
+    // 获取文章点赞
+    getArticleLike () {
+      article_like_Aarray({ articleId: this.$route.params.id })
+        .then((res) => {
+          this.ArticlelikeCount = res.data.length
+          this.isArticleLike = res.data.some(
+            v => v.accountId === this.currentUser.id
+          )
+        })
+        .catch(() => {})
+    },
+    // 收藏表
+    getCollection () {
+      article_collection_Aarray({
+        articleId: this.$route.params.id
+      }).then((res) => {
+        this.isArticleCollection = res.data.some(
+          v => v.accountId === this.currentUser.id
+        )
+      })
+    },
+    // 获取文章详情
+    getArticleInfo () {
+      articleInfo({ id: this.$route.params.id })
+        .then((res) => {
+          document.title = res.data.title
+          this.article = res.data
+          if (res.data.type === 1) {
+            this.articleDetail.content = res.data.contentText
+            this.$nextTick(() => {
+              const { noLevels } = getCatalog(this.$refs.content)
+              this.articleDetail.toc = noLevels
+              this.loading = false
+            })
+          } else {
+            // 处理markdown数据，data为markdown文件读出的字符串
+            const article = markdown.marked(res.data.contentMd)
+            article.then((response) => {
+              this.articleDetail.content = response.content
+              this.articleDetail.toc = response.toc
+              this.loading = false
+            })
+          }
+          this.getComments()
+          this.getArticleLike()
+          this.getCollection()
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
     // 滚动监听加标题
     onScroll: throttle(function () {
       let currentId = 0
       if (this.article.type === 1) {
         let cur = null
-        let i = this.toc.length - 1
+        let i = this.articleDetail.toc.length - 1
         for (; i > 0; i--) {
-          cur = this.toc[i].anchor
+          cur = this.articleDetail.toc[i].anchor
           const top = cur.getBoundingClientRect().top
           if (top < 100) {
             currentId = i
@@ -231,7 +418,7 @@ export default {
       jump[index].scrollIntoView({ behavior: 'smooth' })
     },
     showTitleHandler (index) {
-      this.toc[index].anchor.scrollIntoView({
+      this.articleDetail.toc[index].anchor.scrollIntoView({
         behavior: 'smooth'
       })
     },
@@ -240,7 +427,7 @@ export default {
       return await new Promise((resolve, reject) => {
         if (res.type === 1) {
           comments_Add({
-            articleId: this.articleId,
+            articleId: this.$route.params.id,
             content: res.content,
             discuss: 1
           })
@@ -296,7 +483,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         } else {
           replylike_Disable({
@@ -313,7 +499,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         }
       })
@@ -332,7 +517,6 @@ export default {
       })
 
       callback(res)
-      console.log('uploadImg： ', res)
     },
     // 删除
     async deleteComment (res) {
@@ -349,7 +533,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         } else {
           reply_Disable({ id: res.id })
@@ -363,7 +546,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         }
       })
@@ -392,10 +574,10 @@ export default {
                   )
                 })
             })
-            this.commentData =
-                            this.listQuery.pageIndex === 1
+            this.data =
+                            this.listQuery.pageIndex == 1
                               ? [...listdate]
-                              : [...this.commentData, ...listdate]
+                              : [...this.data, ...listdate]
             this.commentsTotal = res.data.count
             this.busy = false
           } else {
@@ -406,7 +588,7 @@ export default {
     },
     // 加载更多
     loadMore () {
-      if (!this.busy && this.commentsTotal > this.commentData.length) {
+      if (!this.busy && this.commentsTotal > this.data.length) {
         this.listQuery.pageIndex++
         this.getComments()
       }
@@ -608,10 +790,6 @@ export default {
                 font-size: 14px;
                 padding-bottom: 10px;
             }
-        }
-        .wechat {
-            margin-top: 10px;
-            height: 141px;
         }
     }
 }

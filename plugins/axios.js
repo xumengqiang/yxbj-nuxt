@@ -1,4 +1,5 @@
 import qs from 'qs'
+import { Message } from 'element-ui'
 
 // eslint-disable-next-line import/no-mutable-exports
 let axios = null
@@ -20,15 +21,25 @@ export default ({ $axios, redirect, store }) => {
     const res = (response && response.data) || {}
     if (res.code === 200) {
       return res
+    } else {
+      if (res.code === 405 || res.code === 401) {
+        store.dispatch('changeSetting', {
+          key: 'showLogin',
+          value: true
+        })
+      } else if (res.code === 404) {
+        redirect('/404')
+      }
+      return Promise.reject(res)
     }
   })
 
   $axios.onError((error) => {
-    const code = parseInt(error.response && error.response.status)
-    console.log(code, 89898989)
-    if (code === 400) {
-      redirect('/400')
-    }
+    Message({
+      message: error.msg || 'Error',
+      type: 'error',
+      duration: 5 * 1000
+    })
   })
 }
 

@@ -171,7 +171,6 @@ export default {
         // 插入评论或回复
         this.addComment(id, params, res)
       } catch (e) {
-        console.log(e)
       }
       callback()
     },
