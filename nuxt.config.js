@@ -28,14 +28,15 @@ export default {
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     'element-ui/lib/theme-chalk/index.css',
-    '@/assets/css/index.less'
-    // '@/assets/css/article.scss'
-    // '@/assets/css/aside.scss'
+    '@/assets/css/index.less',
+    'viewerjs/dist/viewer.css',
+    '@/assets/css/article.less'
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/plugins/element-ui',
+    '@/plugins/v-viewer',
     '@/plugins/axios'
   ],
 

@@ -15,8 +15,11 @@
     "cookieparser": "^0.1.0",
     "core-js": "^3.11.0",
     "element-ui": "^2.15.1",
+    "highlight.js": "^10.7.2",
     "js-cookie": "^2.2.1",
-    "nuxt": "^2.15.3"
+    "marked": "^2.0.3",
+    "nuxt": "^2.15.3",
+    "v-viewer": "^1.5.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",

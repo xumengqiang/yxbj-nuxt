@@ -140,15 +140,15 @@ export default {
   data () {
     return {
       forms: [], // 显示在视图上的表单id数组
-      cacheData: this.commentData, // 评论数组
+      cacheData: [], // 评论数组
       circleUrl: require('@/assets/head-bd.png') // 默认头像
     }
   },
-  //   watch: {
-  //     commentData (value) {
-  //       this.cacheData = value
-  //     }
-  //   },
+  watch: {
+    commentData () {
+      this.cacheData = this.commentData
+    }
+  },
   methods: {
     // * 点击回复按钮，判断是否已存在该id的表单，存在删除该表单，不存在则新增该表单，并触发其他表单blur事件
     hasForm (id) {

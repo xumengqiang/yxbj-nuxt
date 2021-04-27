@@ -19,8 +19,15 @@
     </ul>
     <div class="body-bot">
       <div class="card">
-        <div v-for="(e, index) in list" :key="index" class="card-item">
-          <a :href="e.linkurl" target="_blank">
+        <div
+          v-for="(e, index) in list"
+          :key="index"
+          class="card-item"
+        >
+          <a
+            :href="e.linkurl"
+            target="_blank"
+          >
             <div class="item_info">
               <div class="info_img">
                 <img :src="e.linklogo">
@@ -57,7 +64,10 @@
         :upload-img="uploadImg"
         :props="props"
       />
-      <div v-if="commentData.length" class="comment-more">
+      <div
+        v-if="commentData.length"
+        class="comment-more"
+      >
         <div
           :class="[
             'comment-more-top',
@@ -99,57 +109,29 @@ import {
 export default {
   name: 'Link',
   layout: 'link',
-  async asyncData ({ store }) {
-    const currentUser = store.state.info || {}
+  async asyncData () {
     const result = await Promise.all([
       homeClassAll(),
       homelinkAll({
         pageIndex: 1,
         pageSize: 12,
         classId: ''
-      }),
-      comments_list({
-        pageIndex: 1,
-        pageSize: 10,
-        discuss: 1,
-        articleId: 'f98ea410-2222-1111-3333-45d0794e84e8'
       })
     ])
-    const listdate = result[2].data.rows || []
-    listdate.forEach((item) => {
-      item.like = item.comm_likes.length
-      item._liked = item.comm_likes.some(
-        v => v.accountId === currentUser.id
-      )
-      item.replies
-        .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
-        .forEach((ele) => {
-          ele.like = ele.reply_likes.length
-          ele._liked = ele.reply_likes.some(
-            v => v.accountId === currentUser.id
-          )
-        })
-    })
     return {
       classList: [{ className: '全部', id: '' }, ...result[0].data] || [],
       list: result[1].data.rows || [],
-      total: result[1].data.count || 0,
-      commentData: listdate || [],
-      commentsTotal: result[2].data.count
+      total: result[1].data.count || 0
     }
   },
   data () {
     return {
-      navCurrent: 0,
-      // classList: [],
-      // list: [],
+      navCurrent: 0, // 分类当前下标
       listQuery: {
         pageIndex: 1,
         pageSize: 12,
         classId: ''
-      },
-      // total: 0,
-      // data: [], //评论数组
+      }, // 查询参数
       props: {
         content: 'content',
         imgSrc: 'imgSrc',
@@ -158,9 +140,10 @@ export default {
         reply: 'reply',
         createAt: 'createAt',
         user: 'visitor'
-      },
-      // commentsTotal: 0, //评论总数
-      busy: false,
+      }, // 评论数组
+      busy: false, // 没有更多评论了
+      commentData: [], // 评论数据
+      commentsTotal: 0, // 评论总数
       article: {
         accountId: '3c512700-5af9-11eb-a0f3-9120cd4a2877',
         cateId: '4f08fb60-5b1d-11eb-a0f3-9120cd4a2877',
@@ -185,7 +168,7 @@ export default {
         pageSize: 10,
         discuss: 1,
         articleId: 'f98ea410-2222-1111-3333-45d0794e84e8'
-      }
+      } // 评论初始数据
     }
   },
   computed: {
@@ -194,24 +177,17 @@ export default {
     }
   },
   created () {
-    // this.getAllCate();
-    // this.getCateArticle();
-    // this.getComments();
+    this.getComments()
   },
   methods: {
-    // getAllCate() {
-    //     homeClassAll().then((res) => {
-    //         this.classList = [{ className: "全部", id: "" }, ...res.data];
-    //     });
-    // },
+    // 获取分类友链
     getCateArticle () {
-      homelinkAll(this.listQuery)
-        .then((res) => {
-          this.list = res.data.rows
-          this.total = res.data.count
-        })
-        .catch(err => console.log(err))
+      homelinkAll(this.listQuery).then((res) => {
+        this.list = res.data.rows
+        this.total = res.data.count
+      }).catch(() => {})
     },
+    // 分类切换
     ChangeClass (i) {
       this.navCurrent = i
       this.listQuery.classId = this.classList[i].id
@@ -236,7 +212,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         } else {
           reply_add({
@@ -257,7 +232,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         }
       })
@@ -280,7 +254,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         } else {
           replylike_Disable({
@@ -297,7 +270,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         }
       })
@@ -316,7 +288,6 @@ export default {
       })
 
       callback(res)
-      console.log('uploadImg： ', res)
     },
     // 删除
     async deleteComment (res) {
@@ -333,7 +304,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         } else {
           reply_Disable({ id: res.id })
@@ -347,7 +317,6 @@ export default {
             })
             .catch((err) => {
               reject(err)
-              console.log(err)
             })
         }
       })
@@ -376,21 +345,19 @@ export default {
                   )
                 })
             })
-            this.data =
-                            this.contentQuery.pageIndex == 1
+            this.commentData =
+                            this.contentQuery.pageIndex === 1
                               ? [...listdate]
-                              : [...this.data, ...listdate]
+                              : [...this.commentData, ...listdate]
             this.commentsTotal = res.data.count
             this.busy = false
           } else {
             this.busy = true
           }
         })
-        .catch(err => console.log(err))
+        .catch(() => {})
     },
-    /**
-         * 加载更多
-         */
+    // 加载更多
     loadMore () {
       if (!this.busy && this.commentsTotal > this.data.length) {
         this.contentQuery.pageIndex++
