@@ -140,7 +140,7 @@ export default {
   data () {
     return {
       forms: [], // 显示在视图上的表单id数组
-      cacheData: [], // 评论数组
+      cacheData: this.commentData, // 评论数组
       circleUrl: require('@/assets/head-bd.png') // 默认头像
     }
   },

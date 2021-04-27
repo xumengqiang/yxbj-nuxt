@@ -1,418 +1,431 @@
 <template>
-  <div
-    class="body"
-  >
-    <div class="body-lf">
-      <div class="content-menu article-content">
-        <div
-          v-if="article.cover"
-          class="content-img"
-        >
-          <img
-            class="cover-img"
-            :src="article.cover"
-            :alt="article.title"
-          >
-        </div>
-        <article
-          ref="content"
-          v-viewer="{ movable: false }"
-          class="markdown-html"
-          v-html="content"
-        />
-      </div>
-      <div class="comment-wrap">
-        <Comment
-          v-model="commentData"
-          :user="currentUser || {}"
-          :article="article"
-          :before-submit="submit"
-          :before-like="like"
-          :before-delete="deleteComment"
-          :upload-img="uploadImg"
-          :props="props"
-        />
-        <div
-          v-if="commentData.length"
-          class="comment-more"
-        >
-          <div
-            :class="[
-              'comment-more-top',
-              commentsTotal > commentData.length
-                ? 'comment-more-top__active'
-                : '',
-            ]"
-            @click="loadMore"
-          >
-            {{
-              commentsTotal > commentData.length
-                ? "查看更多评论"
-                : "没有更多啦"
-            }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="body-rg">
-      <div class="linkfriends-container">
-        <div class="titlebar">
-          目录
-        </div>
-        <div
-          v-if="toc.length == 0"
-          class="ant-none"
-        >
-          该文章暂无目录
-        </div>
-        <div
-          v-else
-          class="ant-anchor-wrapper"
-        >
-          <div class="ant-anchor">
-            <div class="ant-anchor-ink">
-              <span
-                class="ant-anchor-ink-ball"
-                :class="{ visible: highlightIndex >= 0 }"
-                :style="{
-                  top: 10.5 + 30 * highlightIndex + 'px',
-                }"
-              />
+    <div class="body">
+        <div class="body-lf">
+            <div class="content-menu article-content">
+                <div v-if="article.cover" class="content-img">
+                    <img
+                        class="cover-img"
+                        :src="article.cover"
+                        :alt="article.title"
+                    />
+                </div>
+                <article
+                    ref="content"
+                    v-viewer="{ movable: false }"
+                    class="markdown-html"
+                    v-html="content"
+                />
             </div>
-            <div
-              v-for="(item, index) in toc"
-              :key="index"
-              class="ant-anchor-link"
-              :class="{
-                'ant-anchor-link-active':
-                  highlightIndex == index,
-              }"
-            >
-              <a
-                v-if="article.type === 1"
-                class="ant-anchor-link-title"
-                :title="item.text"
-                @click="showTitleHandler(index)"
-              >
-                {{ item.text }}
-              </a>
-              <a
-                v-else
-                class="ant-anchor-link-title"
-                :title="item.text"
-                @click="handleHighlight(item, index)"
-              >
-                {{ item.text }}
-              </a>
+            <div class="comment-wrap">
+                <Comment
+                    v-model="commentData"
+                    :user="currentUser || {}"
+                    :article="article"
+                    :before-submit="submit"
+                    :before-like="like"
+                    :before-delete="deleteComment"
+                    :upload-img="uploadImg"
+                    :props="props"
+                />
+                <div v-if="commentData.length" class="comment-more">
+                    <div
+                        :class="[
+                            'comment-more-top',
+                            commentsTotal > commentData.length
+                                ? 'comment-more-top__active'
+                                : '',
+                        ]"
+                        @click="loadMore"
+                    >
+                        {{
+                            commentsTotal > commentData.length
+                                ? "查看更多评论"
+                                : "没有更多啦"
+                        }}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-      <div class="wechat">
-        <Wechat :status="2" />
-      </div>
+        <div class="body-rg">
+            <div class="linkfriends-container">
+                <div class="titlebar">目录</div>
+                <div v-if="toc.length == 0" class="ant-none">
+                    该文章暂无目录
+                </div>
+                <div v-else class="ant-anchor-wrapper">
+                    <div class="ant-anchor">
+                        <div class="ant-anchor-ink">
+                            <span
+                                class="ant-anchor-ink-ball"
+                                :class="{ visible: highlightIndex >= 0 }"
+                                :style="{
+                                    top: 10.5 + 30 * highlightIndex + 'px',
+                                }"
+                            />
+                        </div>
+                        <div
+                            v-for="(item, index) in toc"
+                            :key="index"
+                            class="ant-anchor-link"
+                            :class="{
+                                'ant-anchor-link-active':
+                                    highlightIndex == index,
+                            }"
+                        >
+                            <a
+                                v-if="article.type === 1"
+                                class="ant-anchor-link-title"
+                                :title="item.text"
+                                @click="showTitleHandler(index)"
+                            >
+                                {{ item.text }}
+                            </a>
+                            <a
+                                v-else
+                                class="ant-anchor-link-title"
+                                :title="item.text"
+                                @click="handleHighlight(item, index)"
+                            >
+                                {{ item.text }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wechat">
+                <Wechat :status="2" />
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 <script>
-import { articleInfo } from 'api/article'
-import throttle from 'utils/throttle'
+import { articleInfo } from "api/article";
+import throttle from "utils/throttle";
 import {
-  // eslint-disable-next-line camelcase
-  comments_Add,
-  // eslint-disable-next-line camelcase
-  comments_Disable,
-  // eslint-disable-next-line camelcase
-  reply_add,
-  // eslint-disable-next-line camelcase
-  reply_Disable,
-  // eslint-disable-next-line camelcase
-  comments_list,
-  // eslint-disable-next-line camelcase
-  commentslike_Disable,
-  // eslint-disable-next-line camelcase
-  replylike_Disable
-} from 'api/comments'
-import markdown from 'utils/markdown'
+    // eslint-disable-next-line camelcase
+    comments_Add,
+    // eslint-disable-next-line camelcase
+    comments_Disable,
+    // eslint-disable-next-line camelcase
+    reply_add,
+    // eslint-disable-next-line camelcase
+    reply_Disable,
+    // eslint-disable-next-line camelcase
+    comments_list,
+    // eslint-disable-next-line camelcase
+    commentslike_Disable,
+    // eslint-disable-next-line camelcase
+    replylike_Disable,
+} from "api/comments";
+import markdown from "utils/markdown";
 export default {
-  name: 'About',
-  async asyncData () {
-    const result = await articleInfo({
-      id: '265c67b0-9b6e-11eb-aff3-094ffeceb988'
-    })
-    // 处理markdown数据，data为markdown文件读出的字符串
-    const artMarked = await markdown.marked(result.data.contentMd)
-    return {
-      article: result.data || {},
-      content: artMarked.content,
-      toc: artMarked.toc
-    }
-  },
-  data () {
-    return {
-      highlightIndex: '', // 文章目标下标
-      loading: true, // 加载loading
-      commentData: [], // 评论数组
-      props: {
-        content: 'content',
-        imgSrc: 'imgSrc',
-        children: 'childrenComments',
-        likes: 'likes',
-        reply: 'reply',
-        createAt: 'createAt',
-        user: 'visitor'
-      },
-      commentsTotal: 0, // 评论总数
-      listQuery: {
-        pageIndex: 1,
-        pageSize: 10,
-        discuss: 1,
-        articleId: '265c67b0-9b6e-11eb-aff3-094ffeceb988'
-      },
-      busy: false,
-      articleId: '265c67b0-9b6e-11eb-aff3-094ffeceb988'
-    }
-  },
-  computed: {
-    currentUser () {
-      return this.$store.getters.info
-    }
-  },
-  created () {
-    this.getComments()
-  },
-  mounted () {
-    this.$nextTick(function () {
-      window.addEventListener('scroll', this.onScroll)
-    })
-  },
-  destroyed () {
-    window.removeEventListener('scroll', this.onScroll)
-  },
-  methods: {
-    // 滚动监听加标题
-    onScroll: throttle(function () {
-      let currentId = 0
-      if (this.article.type === 1) {
-        let cur = null
-        let i = this.toc.length - 1
-        for (; i > 0; i--) {
-          cur = this.toc[i].anchor
-          const top = cur.getBoundingClientRect().top
-          if (top < 100) {
-            currentId = i
-            break
-          }
-        }
-      } else {
-        const top = document.documentElement
-          ? document.documentElement.scrollTop
-          : document.body.scrollTop
-        const items = document.getElementsByClassName('anchor-fix')
-        for (let i = 0; i < items.length; i++) {
-          const _item = items[i]
-          const _itemTop = _item.offsetTop
-          if (top > _itemTop - 75) {
-            currentId = i
-          } else if (top === 0) {
-            currentId = 0
-          } else {
-            break
-          }
-        }
-      }
-      if (currentId >= 0) {
-        //  这里的currentOId是字符串，必须转换成数字，否则高亮项的全等无法匹配
-        this.highlightIndex = parseInt(currentId)
-      }
-    }, 100),
-    handleHighlight (item, index) {
-      const jump = document.querySelectorAll('.anchor-fix')
-      jump[index].scrollIntoView({ behavior: 'smooth' })
-    },
-    showTitleHandler (index) {
-      this.toc[index].anchor.scrollIntoView({
-        behavior: 'smooth'
-      })
-    },
-    // 评论
-    async submit (res) {
-      return await new Promise((resolve, reject) => {
-        if (res.type === 1) {
-          comments_Add({
-            articleId: this.articleId,
-            content: res.content,
-            discuss: 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '评论成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        } else {
-          reply_add({
-            commentsId: res.commentsId,
-            beaccountId: res.beaccountId,
-            content: res.content,
-            nickname: res.account.nickname || '',
-            blog: res.account.blog || '',
-            type: res.type === 2 ? 0 : 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '回复成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        }
-      })
-    },
-    // 点赞
-    async like (res) {
-      return await new Promise((resolve, reject) => {
-        if (res.articleId) {
-          commentslike_Disable({
-            commentsId: res.id,
-            state: res._liked ? 0 : 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: res._liked ? '点赞已取消' : '点赞成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-              console.log(err)
-            })
-        } else {
-          replylike_Disable({
-            replyId: res.id,
-            state: res._liked ? 0 : 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: res._liked ? '点赞已取消' : '点赞成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-              console.log(err)
-            })
-        }
-      })
-    },
-    // 上传图片
-    async uploadImg ({ file, callback }) {
-      const res = await new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => {
-          resolve(reader.result)
-        }
-        reader.onerror = () => {
-          reject(reader.error)
-        }
-      })
+    name: "About",
+    async asyncData({ store }) {
+        const currentUser = store.state.info || {};
+        const result = await Promise.all([
+            articleInfo({
+                id: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
+            }),
+            comments_list({
+                pageIndex: 1,
+                pageSize: 10,
+                discuss: 1,
+                articleId: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
+            }),
+        ]);
+        // 处理markdown数据，data为markdown文件读出的字符串
+        const artMarked = await markdown.marked(result[0].data.contentMd);
 
-      callback(res)
-      console.log('uploadImg： ', res)
-    },
-    // 删除
-    async deleteComment (res) {
-      return await new Promise((resolve, reject) => {
-        if (res.articleId) {
-          comments_Disable({ id: res.id })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '评论删除成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-              console.log(err)
-            })
-        } else {
-          reply_Disable({ id: res.id })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '回复删除成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-              console.log(err)
-            })
-        }
-      })
-    },
-    // 获取文章全部评论
-    getComments () {
-      this.busy = true
-      comments_list(this.listQuery)
-        .then((res) => {
-          if (res.data.rows.length > 0) {
-            const listdate = res.data.rows
-            listdate.forEach((item) => {
-              item.like = item.comm_likes.length
-              item._liked = item.comm_likes.some(
-                v => v.accountId === this.currentUser.id
-              )
-              item.replies
-                .sort((a, b) =>
-                  b.createdAt < a.createdAt ? 1 : -1
-                )
+        const listdate = result[1].data.rows;
+        listdate.forEach((item) => {
+            item.like = item.comm_likes.length;
+            item._liked = item.comm_likes.some(
+                (v) => v.accountId === currentUser.id
+            );
+            item.replies
+                .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
                 .forEach((ele) => {
-                  ele.like = ele.reply_likes.length
-                  ele._liked = ele.reply_likes.some(
-                    v =>
-                      v.accountId === this.currentUser.id
-                  )
-                })
-            })
-            this.commentData =
-                            this.listQuery.pageIndex === 1
-                              ? [...listdate]
-                              : [...this.commentData, ...listdate]
-            this.commentsTotal = res.data.count
-            this.busy = false
-          } else {
-            this.busy = true
-          }
-        })
-        .catch(err => console.log(err))
+                    ele.like = ele.reply_likes.length;
+                    ele._liked = ele.reply_likes.some(
+                        (v) => v.accountId === currentUser.id
+                    );
+                });
+        });
+
+        return {
+            article: result[0].data || {},
+            content: artMarked.content,
+            toc: artMarked.toc,
+            commentData: listdate,
+            commentsTotal: result[1].data.count,
+            busy: result[1].data.rows.length > 0 ? false : true,
+        };
     },
-    // 加载更多
-    loadMore () {
-      if (!this.busy && this.commentsTotal > this.commentData.length) {
-        this.listQuery.pageIndex++
-        this.getComments()
-      }
-    }
-  }
-}
+    data() {
+        return {
+            highlightIndex: "", // 文章目标下标
+
+            // commentData: [], // 评论数组
+            props: {
+                content: "content",
+                imgSrc: "imgSrc",
+                children: "childrenComments",
+                likes: "likes",
+                reply: "reply",
+                createAt: "createAt",
+                user: "visitor",
+            },
+            // commentsTotal: 0, // 评论总数
+            listQuery: {
+                pageIndex: 1,
+                pageSize: 10,
+                discuss: 1,
+                articleId: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
+            },
+            // busy: false,
+            articleId: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
+        };
+    },
+    computed: {
+        currentUser() {
+            return this.$store.getters.info;
+        },
+    },
+    // created() {
+    //     this.getComments();
+    // },
+    mounted() {
+        this.$nextTick(function () {
+            window.addEventListener("scroll", this.onScroll);
+        });
+    },
+    destroyed() {
+        window.removeEventListener("scroll", this.onScroll);
+    },
+    methods: {
+        // 滚动监听加标题
+        onScroll: throttle(function () {
+            let currentId = 0;
+            if (this.article.type === 1) {
+                let cur = null;
+                let i = this.toc.length - 1;
+                for (; i > 0; i--) {
+                    cur = this.toc[i].anchor;
+                    const top = cur.getBoundingClientRect().top;
+                    if (top < 100) {
+                        currentId = i;
+                        break;
+                    }
+                }
+            } else {
+                const top = document.documentElement
+                    ? document.documentElement.scrollTop
+                    : document.body.scrollTop;
+                const items = document.getElementsByClassName("anchor-fix");
+                for (let i = 0; i < items.length; i++) {
+                    const _item = items[i];
+                    const _itemTop = _item.offsetTop;
+                    if (top > _itemTop - 75) {
+                        currentId = i;
+                    } else if (top === 0) {
+                        currentId = 0;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (currentId >= 0) {
+                //  这里的currentOId是字符串，必须转换成数字，否则高亮项的全等无法匹配
+                this.highlightIndex = parseInt(currentId);
+            }
+        }, 100),
+        handleHighlight(item, index) {
+            const jump = document.querySelectorAll(".anchor-fix");
+            jump[index].scrollIntoView({ behavior: "smooth" });
+        },
+        showTitleHandler(index) {
+            this.toc[index].anchor.scrollIntoView({
+                behavior: "smooth",
+            });
+        },
+        // 评论
+        async submit(res) {
+            return await new Promise((resolve, reject) => {
+                if (res.type === 1) {
+                    comments_Add({
+                        articleId: this.articleId,
+                        content: res.content,
+                        discuss: 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "评论成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                } else {
+                    reply_add({
+                        commentsId: res.commentsId,
+                        beaccountId: res.beaccountId,
+                        content: res.content,
+                        nickname: res.account.nickname || "",
+                        blog: res.account.blog || "",
+                        type: res.type === 2 ? 0 : 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "回复成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                }
+            });
+        },
+        // 点赞
+        async like(res) {
+            return await new Promise((resolve, reject) => {
+                if (res.articleId) {
+                    commentslike_Disable({
+                        commentsId: res.id,
+                        state: res._liked ? 0 : 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: res._liked ? "点赞已取消" : "点赞成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                            console.log(err);
+                        });
+                } else {
+                    replylike_Disable({
+                        replyId: res.id,
+                        state: res._liked ? 0 : 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: res._liked ? "点赞已取消" : "点赞成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                            console.log(err);
+                        });
+                }
+            });
+        },
+        // 上传图片
+        async uploadImg({ file, callback }) {
+            const res = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+            });
+
+            callback(res);
+            console.log("uploadImg： ", res);
+        },
+        // 删除
+        async deleteComment(res) {
+            return await new Promise((resolve, reject) => {
+                if (res.articleId) {
+                    comments_Disable({ id: res.id })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "评论删除成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                            console.log(err);
+                        });
+                } else {
+                    reply_Disable({ id: res.id })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "回复删除成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                            console.log(err);
+                        });
+                }
+            });
+        },
+        // 获取文章全部评论
+        getComments() {
+            this.busy = true;
+            comments_list(this.listQuery)
+                .then((res) => {
+                    if (res.data.rows.length > 0) {
+                        const listdate = res.data.rows;
+                        listdate.forEach((item) => {
+                            item.like = item.comm_likes.length;
+                            item._liked = item.comm_likes.some(
+                                (v) => v.accountId === this.currentUser.id
+                            );
+                            item.replies
+                                .sort((a, b) =>
+                                    b.createdAt < a.createdAt ? 1 : -1
+                                )
+                                .forEach((ele) => {
+                                    ele.like = ele.reply_likes.length;
+                                    ele._liked = ele.reply_likes.some(
+                                        (v) =>
+                                            v.accountId === this.currentUser.id
+                                    );
+                                });
+                        });
+                        this.commentData =
+                            this.listQuery.pageIndex === 1
+                                ? [...listdate]
+                                : [...this.commentData, ...listdate];
+                        this.commentsTotal = res.data.count;
+                        this.busy = false;
+                    } else {
+                        this.busy = true;
+                    }
+                })
+                .catch((err) => console.log(err));
+        },
+        // 加载更多
+        loadMore() {
+            if (!this.busy && this.commentsTotal > this.commentData.length) {
+                this.listQuery.pageIndex++;
+                this.getComments();
+            }
+        },
+    },
+};
 </script>
 
 <style lang="less" scoped>

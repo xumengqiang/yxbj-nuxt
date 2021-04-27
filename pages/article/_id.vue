@@ -1,600 +1,555 @@
 <template>
-  <div
-    class="body"
-  >
-    <div class="body-lf">
-      <div class="content-menu article-content">
-        <div class="cotent-head">
-          <h2 class="content-title">
-            {{ article.title }}
-          </h2>
-          <div class="cotent-tag">
-            <i class="el-icon-time" />
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="'发布于' + article.createdAt"
-              placement="top"
-            >
-              <span class="icon-text">{{
-                article.createdAt | formatTime
-              }}</span>
-            </el-tooltip>
-            <i class="el-icon-reading" />
-            <span class="icon-text">{{ article.views }}</span>
-          </div>
-        </div>
-        <div
-          v-if="article.cover"
-          class="content-img"
-        >
-          <img
-            class="cover-img"
-            :src="article.cover"
-            :alt="article.title"
-          >
-        </div>
-        <article
-          ref="content"
-          v-viewer="{ movable: false }"
-          class="markdown-html"
-          v-html="content"
-        />
-      </div>
-      <div id="child" class="comment-wrap">
-        <Comment
-          v-model="commentData"
-          :user="currentUser || {}"
-          :article="article"
-          :before-submit="submit"
-          :before-like="like"
-          :before-delete="deleteComment"
-          :upload-img="uploadImg"
-          :props="props"
-        />
-        <div v-if="commentData.length" class="comment-more">
-          <div
-            :class="[
-              'comment-more-top',
-              commentsTotal > commentData.length
-                ? 'comment-more-top__active'
-                : '',
-            ]"
-            @click="loadMore"
-          >
-            {{
-              commentsTotal > commentData.length
-                ? "查看更多评论"
-                : "没有更多啦"
-            }}
-          </div>
-        </div>
-      </div>
-      <div class="article-suspended-panel">
-        <div
-          class="like-adjust with-badge panel-btn"
-          :class="[isArticleLike ? 'like-active' : 'like-btn']"
-          :badge="ArticlelikeCount"
-          @click="Articlelike"
-        />
-        <div
-          class="comment-btn panel-btn comment-adjust with-badge"
-          :badge="commentsTotal"
-          @click="Articlecomment"
-        />
-        <div
-          class="panel-btn"
-          :class="[
-            isArticleCollection ? 'collect-active' : 'collect-btn',
-          ]"
-          @click="collection"
-        />
-        <div class="share-title">
-          分享
-        </div>
-        <div
-          class="wechat-btn share-btn panel-btn"
-          @mouseenter="ChangemouseEnter"
-          @mouseout="mouseOut"
-        />
-        <div v-show="isCodeActive" ref="qrCodeUrl" class="qrcode" />
-      </div>
-    </div>
-    <div class="body-rg">
-      <div class="linkfriends-container">
-        <div class="titlebar">
-          目录
-        </div>
-        <div v-if="toc.length == 0" class="ant-none">
-          该文章暂无目录
-        </div>
-        <div v-else class="ant-anchor-wrapper">
-          <div class="ant-anchor">
-            <div class="ant-anchor-ink">
-              <span
-                class="ant-anchor-ink-ball"
-                :class="{ visible: highlightIndex >= 0 }"
-                :style="{
-                  top: 10.5 + 30 * highlightIndex + 'px',
-                }"
-              />
+    <div class="body">
+        <div class="body-lf">
+            <div class="content-menu article-content">
+                <div class="cotent-head">
+                    <h2 class="content-title">
+                        {{ article.title }}
+                    </h2>
+                    <div class="cotent-tag">
+                        <i class="el-icon-time" />
+                        <el-tooltip
+                            class="item"
+                            effect="dark"
+                            :content="'发布于' + article.createdAt"
+                            placement="top"
+                        >
+                            <span class="icon-text">{{
+                                article.createdAt | formatTime
+                            }}</span>
+                        </el-tooltip>
+                        <i class="el-icon-reading" />
+                        <span class="icon-text">{{ article.views }}</span>
+                    </div>
+                </div>
+                <div v-if="article.cover" class="content-img">
+                    <img
+                        class="cover-img"
+                        :src="article.cover"
+                        :alt="article.title"
+                    />
+                </div>
+                <article
+                    ref="content"
+                    v-viewer="{ movable: false }"
+                    class="markdown-html"
+                    v-html="content"
+                />
             </div>
-            <div
-              v-for="(item, index) in toc"
-              :key="index"
-              class="ant-anchor-link"
-              :class="{
-                'ant-anchor-link-active':
-                  highlightIndex == index,
-              }"
-            >
-              <a
-                v-if="article.type === 1"
-                class="ant-anchor-link-title"
-                :title="item.text"
-                @click="showTitleHandler(index)"
-              >
-                {{ item.text }}
-              </a>
-              <a
-                v-else
-                class="ant-anchor-link-title"
-                :title="item.text"
-                @click="handleHighlight(item, index)"
-              >
-                {{ item.text }}
-              </a>
+            <div id="child" class="comment-wrap">
+                <Comment
+                    v-model="commentData"
+                    :user="currentUser || {}"
+                    :article="article"
+                    :before-submit="submit"
+                    :before-like="like"
+                    :before-delete="deleteComment"
+                    :upload-img="uploadImg"
+                    :props="props"
+                />
+                <div v-if="commentData.length" class="comment-more">
+                    <div
+                        :class="[
+                            'comment-more-top',
+                            commentsTotal > commentData.length
+                                ? 'comment-more-top__active'
+                                : '',
+                        ]"
+                        @click="loadMore"
+                    >
+                        {{
+                            commentsTotal > commentData.length
+                                ? "查看更多评论"
+                                : "没有更多啦"
+                        }}
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="article-suspended-panel">
+                <div
+                    class="like-adjust with-badge panel-btn"
+                    :class="[isArticleLike ? 'like-active' : 'like-btn']"
+                    :badge="ArticlelikeCount"
+                    @click="Articlelike"
+                />
+                <div
+                    class="comment-btn panel-btn comment-adjust with-badge"
+                    :badge="commentsTotal"
+                    @click="Articlecomment"
+                />
+                <div
+                    class="panel-btn"
+                    :class="[
+                        isArticleCollection ? 'collect-active' : 'collect-btn',
+                    ]"
+                    @click="collection"
+                />
+                <div class="share-title">分享</div>
+                <div
+                    class="wechat-btn share-btn panel-btn"
+                    @mouseenter="ChangemouseEnter"
+                    @mouseout="mouseOut"
+                />
+                <div v-show="isCodeActive" id="qrCodeUrl" class="qrcode" />
+            </div>
         </div>
-      </div>
+        <div class="body-rg">
+            <div class="linkfriends-container">
+                <div class="titlebar">目录</div>
+                <div v-if="toc.length == 0" class="ant-none">
+                    该文章暂无目录
+                </div>
+                <div v-else class="ant-anchor-wrapper">
+                    <div class="ant-anchor">
+                        <div class="ant-anchor-ink">
+                            <span
+                                class="ant-anchor-ink-ball"
+                                :class="{ visible: highlightIndex >= 0 }"
+                                :style="{
+                                    top: 10.5 + 30 * highlightIndex + 'px',
+                                }"
+                            />
+                        </div>
+                        <div
+                            v-for="(item, index) in toc"
+                            :key="index"
+                            class="ant-anchor-link"
+                            :class="{
+                                'ant-anchor-link-active':
+                                    highlightIndex == index,
+                            }"
+                        >
+                            <a
+                                v-if="article.type === 1"
+                                class="ant-anchor-link-title"
+                                :title="item.text"
+                                @click="showTitleHandler(index)"
+                            >
+                                {{ item.text }}
+                            </a>
+                            <a
+                                v-else
+                                class="ant-anchor-link-title"
+                                :title="item.text"
+                                @click="handleHighlight(item, index)"
+                            >
+                                {{ item.text }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 <script>
-import util from 'utils/util'
-import QRCode from 'qrcodejs2'
+import util from "utils/util";
 import {
-  articleInfo,
-  article_like_Add,
-  article_like_Aarray,
-  article_collection_Aarray,
-  article_collection_Add
-} from 'api/article'
-import throttle from 'utils/throttle'
+    articleInfo,
+    article_like_Add,
+    article_like_Aarray,
+    article_collection_Aarray,
+    article_collection_Add,
+} from "api/article";
+import throttle from "utils/throttle";
 import {
-  comments_Add,
-  comments_Disable,
-  reply_add,
-  reply_Disable,
-  comments_list,
-  commentslike_Disable,
-  replylike_Disable
-} from 'api/comments'
-import markdown from 'utils/markdown'
-import getCatalog from 'utils/getCatalog'
+    comments_Add,
+    comments_Disable,
+    reply_add,
+    reply_Disable,
+    comments_list,
+    commentslike_Disable,
+    replylike_Disable,
+} from "api/comments";
+import markdown from "utils/markdown";
+import getCatalog from "utils/getCatalog";
 export default {
-  name: 'Article',
-  filters: {
-    formatTime (time) {
-      return util.formatTime(time)
-    }
-  },
-  async asyncData ({ route }) {
-    const result = await articleInfo({ id: route.params.id })
-    let content = ''
-    const toc = ''
-    let artMarked = ''
-    if (result.data.type === 1) {
-      content = result.data.contentText
-      //   this.$nextTick(() => {
-      //   const { noLevels } = getCatalog(this.$refs.content)
-      //   this.articleDetail.toc = noLevels
-      //     this.loading = false
-      //   })
-    } else {
-      // 处理markdown数据，data为markdown文件读出的字符串
-      artMarked = await markdown.marked(result.data.contentMd)
-      //   article.then((response) => {
-      //     this.articleDetail.content = response.content
-      //     this.articleDetail.toc = response.toc
-      //     this.loading = false
-      //   })
-    }
-    return {
-      article: result.data,
-      content: content || artMarked.content,
-      toc: toc || artMarked.toc
-    }
-  },
-  data () {
-    return {
-      //   article: {}, // 文章详情
-      highlightIndex: '', // 文章目标下标
-      articleDetail: {
-        content: '',
-        toc: ''
-      },
-      loading: true, // 加载loading
-      commentData: [], // 评论数组
-      props: {
-        content: 'content',
-        imgSrc: 'imgSrc',
-        children: 'childrenComments',
-        likes: 'likes',
-        reply: 'reply',
-        createAt: 'createAt',
-        user: 'visitor'
-      },
-      commentsTotal: 0, // 评论总数
-      listQuery: {
-        pageIndex: 1,
-        pageSize: 10,
-        discuss: 1,
-        articleId: this.$route.params.id
-      },
-      busy: false,
-      ArticlelikeCount: 0, // 文章点赞数
-      isArticleLike: false, // 文章点赞
-      isArticleCollection: false, // 文章收藏
-      isCodeActive: false // 二维码
-    }
-  },
-  computed: {
-    currentUser () {
-      return this.$store.state.info
-    }
-  },
-  created () {
-    // this.getArticleInfo()
-  },
-  mounted () {
-    this.$nextTick(function () {
-      window.addEventListener('scroll', this.onScroll)
-      const { noLevels } = getCatalog(this.$refs.content)
-      this.toc = noLevels
-      this.creatQrCode()
-    })
-  },
-  destroyed () {
-    window.removeEventListener('scroll', this.onScroll)
-  },
-  methods: {
-    ChangemouseEnter () {
-      this.isCodeActive = true
+    name: "Article",
+    filters: {
+        formatTime(time) {
+            return util.formatTime(time);
+        },
     },
-    mouseOut () {
-      this.isCodeActive = false
-    },
-    creatQrCode () {
-      // eslint-disable-next-line no-new
-      new QRCode(this.$refs.qrCodeUrl, {
-        text: `https://m.youxiubiji.com/pages/article/index?id=${this.$route.params.id}`, // 需要转换为二维码的内容
-        width: 96,
-        height: 96,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      })
-    },
-    // 点击评论快捷键，页面滑动底部
-    Articlecomment () {
-      const element = document.getElementById('child')
-      element.scrollIntoViewIfNeeded(false)
-    },
-    // 文章点赞
-    Articlelike () {
-      article_like_Add({
-        articleId: this.$route.params.id
-      })
-        .then(() => {
-          if (this.isArticleLike) {
-            this.isArticleLike = false
-            this.ArticlelikeCount = this.ArticlelikeCount - 1
-            this.$message({
-              message: '取消成功',
-              type: 'warning'
-            })
-          } else {
-            this.isArticleLike = true
-            this.ArticlelikeCount = this.ArticlelikeCount + 1
-            this.$message({
-              message: '点赞成功',
-              type: 'success'
-            })
-          }
-        })
-        .catch(() => {})
-    },
-    // 文章收藏
-    collection () {
-      article_collection_Add({ articleId: this.$route.params.id })
-        .then(() => {
-          if (this.isArticleCollection) {
-            this.isArticleCollection = false
-            this.$message({
-              message: '取消成功',
-              type: 'warning'
-            })
-          } else {
-            this.isArticleCollection = true
-            this.$message({
-              message: '收藏成功',
-              type: 'success'
-            })
-          }
-        })
-        .catch(() => {})
-    },
-    // 获取文章点赞
-    getArticleLike () {
-      article_like_Aarray({ articleId: this.$route.params.id })
-        .then((res) => {
-          this.ArticlelikeCount = res.data.length
-          this.isArticleLike = res.data.some(
-            v => v.accountId === this.currentUser.id
-          )
-        })
-        .catch(() => {})
-    },
-    // 收藏表
-    getCollection () {
-      article_collection_Aarray({
-        articleId: this.$route.params.id
-      }).then((res) => {
-        this.isArticleCollection = res.data.some(
-          v => v.accountId === this.currentUser.id
-        )
-      })
-    },
-    // 获取文章详情
-    getArticleInfo () {
-      articleInfo({ id: this.$route.params.id })
-        .then((res) => {
-          document.title = res.data.title
-          this.article = res.data
-          if (res.data.type === 1) {
-            this.articleDetail.content = res.data.contentText
-            this.$nextTick(() => {
-              const { noLevels } = getCatalog(this.$refs.content)
-              this.articleDetail.toc = noLevels
-              this.loading = false
-            })
-          } else {
+    async asyncData({ route, store }) {
+        const currentUser = store.state.info || {};
+        const result = await Promise.all([
+            articleInfo({ id: route.params.id }),
+            article_like_Aarray({ articleId: route.params.id }),
+            article_collection_Aarray({
+                articleId: route.params.id,
+            }),
+            comments_list({
+                pageIndex: 1,
+                pageSize: 10,
+                discuss: 1,
+                articleId: route.params.id,
+            }),
+        ]);
+        let content = "";
+        let artMarked = "";
+        if (result[0].data.type === 1) {
+            content = result[0].data.contentText;
+        } else {
             // 处理markdown数据，data为markdown文件读出的字符串
-            const article = markdown.marked(res.data.contentMd)
-            article.then((response) => {
-              this.articleDetail.content = response.content
-              this.articleDetail.toc = response.toc
-              this.loading = false
-            })
-          }
-          this.getComments()
-          this.getArticleLike()
-          this.getCollection()
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
-    // 滚动监听加标题
-    onScroll: throttle(function () {
-      let currentId = 0
-      if (this.article.type === 1) {
-        let cur = null
-        let i = this.articleDetail.toc.length - 1
-        for (; i > 0; i--) {
-          cur = this.articleDetail.toc[i].anchor
-          const top = cur.getBoundingClientRect().top
-          if (top < 100) {
-            currentId = i
-            break
-          }
+            artMarked = await markdown.marked(result[0].data.contentMd);
         }
-      } else {
-        const top = document.documentElement
-          ? document.documentElement.scrollTop
-          : document.body.scrollTop
-        const items = document.getElementsByClassName('anchor-fix')
-        for (let i = 0; i < items.length; i++) {
-          const _item = items[i]
-          const _itemTop = _item.offsetTop
-          if (top > _itemTop - 75) {
-            currentId = i
-          } else if (top === 0) {
-            currentId = 0
-          } else {
-            break
-          }
-        }
-      }
-      if (currentId >= 0) {
-        //  这里的currentOId是字符串，必须转换成数字，否则高亮项的全等无法匹配
-        this.highlightIndex = parseInt(currentId)
-      }
-    }, 100),
-    handleHighlight (item, index) {
-      const jump = document.querySelectorAll('.anchor-fix')
-      jump[index].scrollIntoView({ behavior: 'smooth' })
-    },
-    showTitleHandler (index) {
-      this.articleDetail.toc[index].anchor.scrollIntoView({
-        behavior: 'smooth'
-      })
-    },
-    // 评论
-    async submit (res) {
-      return await new Promise((resolve, reject) => {
-        if (res.type === 1) {
-          comments_Add({
-            articleId: this.$route.params.id,
-            content: res.content,
-            discuss: 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '评论成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        } else {
-          reply_add({
-            commentsId: res.commentsId,
-            beaccountId: res.beaccountId,
-            content: res.content,
-            nickname: res.account.nickname || '',
-            blog: res.account.blog || '',
-            type: res.type === 2 ? 0 : 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '回复成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        }
-      })
-    },
-    // 点赞
-    async like (res) {
-      return await new Promise((resolve, reject) => {
-        if (res.articleId) {
-          commentslike_Disable({
-            commentsId: res.id,
-            state: res._liked ? 0 : 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: res._liked ? '点赞已取消' : '点赞成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        } else {
-          replylike_Disable({
-            replyId: res.id,
-            state: res._liked ? 0 : 1
-          })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: res._liked ? '点赞已取消' : '点赞成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        }
-      })
-    },
-    // 上传图片
-    async uploadImg ({ file, callback }) {
-      const res = await new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => {
-          resolve(reader.result)
-        }
-        reader.onerror = () => {
-          reject(reader.error)
-        }
-      })
 
-      callback(res)
-    },
-    // 删除
-    async deleteComment (res) {
-      return await new Promise((resolve, reject) => {
-        if (res.articleId) {
-          comments_Disable({ id: res.id })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '评论删除成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        } else {
-          reply_Disable({ id: res.id })
-            .then((response) => {
-              resolve(response.data)
-              this.$notify({
-                title: '成功',
-                message: '回复删除成功',
-                type: 'success'
-              })
-            })
-            .catch((err) => {
-              reject(err)
-            })
-        }
-      })
-    },
-    // 获取文章全部评论
-    getComments () {
-      this.busy = true
-      comments_list(this.listQuery)
-        .then((res) => {
-          if (res.data.rows.length > 0) {
-            const listdate = res.data.rows
-            listdate.forEach((item) => {
-              item.like = item.comm_likes.length
-              item._liked = item.comm_likes.some(
-                v => v.accountId === this.currentUser.id
-              )
-              item.replies
-                .sort((a, b) =>
-                  b.createdAt < a.createdAt ? 1 : -1
-                )
+        const listdate = result[3].data.rows;
+        listdate.forEach((item) => {
+            item.like = item.comm_likes.length;
+            item._liked = item.comm_likes.some(
+                (v) => v.accountId === currentUser.id
+            );
+            item.replies
+                .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
                 .forEach((ele) => {
-                  ele.like = ele.reply_likes.length
-                  ele._liked = ele.reply_likes.some(
-                    v =>
-                      v.accountId === this.currentUser.id
-                  )
-                })
-            })
-            this.data =
-                            this.listQuery.pageIndex == 1
-                              ? [...listdate]
-                              : [...this.data, ...listdate]
-            this.commentsTotal = res.data.count
-            this.busy = false
-          } else {
-            this.busy = true
-          }
-        })
-        .catch(err => console.log(err))
+                    ele.like = ele.reply_likes.length;
+                    ele._liked = ele.reply_likes.some(
+                        (v) => v.accountId === currentUser.id
+                    );
+                });
+        });
+
+        return {
+            article: result[0].data,
+            content: content || artMarked.content,
+            toc: artMarked.toc,
+            ArticlelikeCount: result[1].data.length,
+            isArticleLike: result[1].data.some(
+                (v) => v.accountId === currentUser.id
+            ),
+            isArticleCollection: result[2].data.some(
+                (v) => v.accountId === currentUser.id
+            ),
+            commentData:listdate,
+            commentsTotal:result[3].data.count,
+            busy:result[3].data.rows.length > 0 ? false :true
+        };
     },
-    // 加载更多
-    loadMore () {
-      if (!this.busy && this.commentsTotal > this.data.length) {
-        this.listQuery.pageIndex++
-        this.getComments()
-      }
-    }
-  }
-}
+    data() {
+        return {
+            highlightIndex: "", // 文章目标下标
+            props: {
+                content: "content",
+                imgSrc: "imgSrc",
+                children: "childrenComments",
+                likes: "likes",
+                reply: "reply",
+                createAt: "createAt",
+                user: "visitor",
+            },
+            listQuery: {
+                pageIndex: 1,
+                pageSize: 10,
+                discuss: 1,
+                articleId: this.$route.params.id,
+            },
+            isCodeActive: false, // 二维码
+        };
+    },
+    computed: {
+        currentUser() {
+            return this.$store.state.info;
+        },
+    },
+    mounted() {
+        this.$nextTick(() => {
+            window.addEventListener("scroll", this.onScroll);
+            if (this.article.type === 1) {
+                const { noLevels } = getCatalog(this.$refs.content);
+                this.toc = noLevels;
+            }
+            this.creatQrCode();
+        });
+    },
+    destroyed() {
+        window.removeEventListener("scroll", this.onScroll);
+    },
+    methods: {
+        ChangemouseEnter() {
+            this.isCodeActive = true;
+        },
+        mouseOut() {
+            this.isCodeActive = false;
+        },
+        creatQrCode() {
+            // eslint-disable-next-line no-new
+            new QRCode("qrCodeUrl", {
+                text: `https://m.youxiubiji.com/pages/article/index?id=${this.$route.params.id}`, // 需要转换为二维码的内容
+                width: 96,
+                height: 96,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+            });
+        },
+        // 点击评论快捷键，页面滑动底部
+        Articlecomment() {
+            const element = document.getElementById("child");
+            element.scrollIntoViewIfNeeded(false);
+        },
+        // 文章点赞
+        Articlelike() {
+            article_like_Add({
+                articleId: this.$route.params.id,
+            })
+                .then(() => {
+                    if (this.isArticleLike) {
+                        this.isArticleLike = false;
+                        this.ArticlelikeCount = this.ArticlelikeCount - 1;
+                        this.$message({
+                            message: "取消成功",
+                            type: "warning",
+                        });
+                    } else {
+                        this.isArticleLike = true;
+                        this.ArticlelikeCount = this.ArticlelikeCount + 1;
+                        this.$message({
+                            message: "点赞成功",
+                            type: "success",
+                        });
+                    }
+                })
+                .catch(() => {});
+        },
+        // 文章收藏
+        collection() {
+            article_collection_Add({ articleId: this.$route.params.id })
+                .then(() => {
+                    if (this.isArticleCollection) {
+                        this.isArticleCollection = false;
+                        this.$message({
+                            message: "取消成功",
+                            type: "warning",
+                        });
+                    } else {
+                        this.isArticleCollection = true;
+                        this.$message({
+                            message: "收藏成功",
+                            type: "success",
+                        });
+                    }
+                })
+                .catch(() => {});
+        },
+        // 滚动监听加标题
+        onScroll: throttle(function () {
+            let currentId = 0;
+            if (this.article.type === 1) {
+                let cur = null;
+                let i = this.toc.length - 1;
+                for (; i > 0; i--) {
+                    cur = this.toc[i].anchor;
+                    const top = cur.getBoundingClientRect().top;
+                    if (top < 100) {
+                        currentId = i;
+                        break;
+                    }
+                }
+            } else {
+                const top = document.documentElement
+                    ? document.documentElement.scrollTop
+                    : document.body.scrollTop;
+                const items = document.getElementsByClassName("anchor-fix");
+                for (let i = 0; i < items.length; i++) {
+                    const _item = items[i];
+                    const _itemTop = _item.offsetTop;
+                    if (top > _itemTop - 75) {
+                        currentId = i;
+                    } else if (top === 0) {
+                        currentId = 0;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            if (currentId >= 0) {
+                //  这里的currentOId是字符串，必须转换成数字，否则高亮项的全等无法匹配
+                this.highlightIndex = parseInt(currentId);
+            }
+        }, 100),
+        handleHighlight(item, index) {
+            const jump = document.querySelectorAll(".anchor-fix");
+            jump[index].scrollIntoView({ behavior: "smooth" });
+        },
+        showTitleHandler(index) {
+            this.toc[index].anchor.scrollIntoView({
+                behavior: "smooth",
+            });
+        },
+        // 评论
+        async submit(res) {
+            return await new Promise((resolve, reject) => {
+                if (res.type === 1) {
+                    comments_Add({
+                        articleId: this.$route.params.id,
+                        content: res.content,
+                        discuss: 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "评论成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                } else {
+                    reply_add({
+                        commentsId: res.commentsId,
+                        beaccountId: res.beaccountId,
+                        content: res.content,
+                        nickname: res.account.nickname || "",
+                        blog: res.account.blog || "",
+                        type: res.type === 2 ? 0 : 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "回复成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                }
+            });
+        },
+        // 点赞
+        async like(res) {
+            return await new Promise((resolve, reject) => {
+                if (res.articleId) {
+                    commentslike_Disable({
+                        commentsId: res.id,
+                        state: res._liked ? 0 : 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: res._liked ? "点赞已取消" : "点赞成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                } else {
+                    replylike_Disable({
+                        replyId: res.id,
+                        state: res._liked ? 0 : 1,
+                    })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: res._liked ? "点赞已取消" : "点赞成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                }
+            });
+        },
+        // 上传图片
+        async uploadImg({ file, callback }) {
+            const res = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+                reader.onerror = () => {
+                    reject(reader.error);
+                };
+            });
+
+            callback(res);
+        },
+        // 删除
+        async deleteComment(res) {
+            return await new Promise((resolve, reject) => {
+                if (res.articleId) {
+                    comments_Disable({ id: res.id })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "评论删除成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                } else {
+                    reply_Disable({ id: res.id })
+                        .then((response) => {
+                            resolve(response.data);
+                            this.$notify({
+                                title: "成功",
+                                message: "回复删除成功",
+                                type: "success",
+                            });
+                        })
+                        .catch((err) => {
+                            reject(err);
+                        });
+                }
+            });
+        },
+        // 获取文章全部评论
+        getComments() {
+            this.busy = true;
+            comments_list(this.listQuery)
+                .then((res) => {
+                    if (res.data.rows.length > 0) {
+                        const listdate = res.data.rows;
+                        listdate.forEach((item) => {
+                            item.like = item.comm_likes.length;
+                            item._liked = item.comm_likes.some(
+                                (v) => v.accountId === this.currentUser.id
+                            );
+                            item.replies
+                                .sort((a, b) =>
+                                    b.createdAt < a.createdAt ? 1 : -1
+                                )
+                                .forEach((ele) => {
+                                    ele.like = ele.reply_likes.length;
+                                    ele._liked = ele.reply_likes.some(
+                                        (v) =>
+                                            v.accountId === this.currentUser.id
+                                    );
+                                });
+                        });
+                        this.commentData =
+                            this.listQuery.pageIndex == 1
+                                ? [...listdate]
+                                : [...this.commentData, ...listdate];
+                        this.commentsTotal = res.data.count;
+                        this.busy = false;
+                    } else {
+                        this.busy = true;
+                    }
+                })
+                .catch((err) => console.log(err));
+        },
+        // 加载更多
+        loadMore() {
+            if (!this.busy && this.commentsTotal > this.commentData.length) {
+                this.listQuery.pageIndex++;
+                this.getComments();
+            }
+        },
+    },
+};
 </script>
 
 <style lang="less" scoped>
