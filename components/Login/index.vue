@@ -423,7 +423,7 @@ export default {
             left: 70px;
             width: 240px;
             height: 240px;
-            background-color: rgb(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;

@@ -17,12 +17,12 @@ export default {
   name: 'Default',
   computed: {
     showLogin () {
-      return this.$store.state.settings.showLogin
+      return this.$store.state.showLogin
     }
   },
   methods: {
     changeClose () {
-      this.$store.dispatch('settings/changeSetting', {
+      this.$store.dispatch('changeSetting', {
         key: 'showLogin',
         value: false
       })

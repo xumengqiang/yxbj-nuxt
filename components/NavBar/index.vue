@@ -1,135 +1,137 @@
 <template>
-    <div class="headers">
-        <div class="header_menu">
-            <div class="logo">
-                <img :src="logo" />
-            </div>
-            <ul>
-                <nuxt-link v-slot="{ navigate, isExactActive }" custom to="/">
-                    <li
-                        :class="[isExactActive && 'nuxt-link-exact-active']"
-                        @click="navigate"
-                    >
-                        首页
-                    </li>
-                </nuxt-link>
-                <nuxt-link
-                    v-slot="{ navigate, isActive }"
-                    to="/technology"
-                    custom
-                >
-                    <li
-                        :class="[isActive && 'nuxt-link-exact-active']"
-                        @click="navigate"
-                    >
-                        优秀笔记
-                    </li>
-                </nuxt-link>
-                <nuxt-link v-slot="{ navigate, isActive }" to="/doc" custom>
-                    <li
-                        :class="[isActive && 'nuxt-link-exact-active']"
-                        @click="navigate"
-                    >
-                        优秀文档
-                    </li>
-                </nuxt-link>
-                <nuxt-link v-slot="{ navigate, isActive }" to="/link" custom>
-                    <li
-                        :class="[isActive && 'nuxt-link-exact-active']"
-                        @click="navigate"
-                    >
-                        优秀友链
-                    </li>
-                </nuxt-link>
-                <nuxt-link v-slot="{ navigate, isActive }" to="/about" custom>
-                    <li
-                        :class="[isActive && 'nuxt-link-exact-active']"
-                        @click="navigate"
-                    >
-                        关于博主
-                    </li>
-                </nuxt-link>
-                <li v-if="!token" @click="changeLogin">登录/注册</li>
-                <el-dropdown v-else trigger="click">
-                    <div class="avator">
-                        <el-avatar
-                            :size="40"
-                            :src="info.avatar ? info.avatar : circleUrl"
-                        />
-                    </div>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>
-                            <nuxt-link
-                                v-slot="{ navigate }"
-                                to="/editor"
-                                custom
-                            >
-                                <span @click="navigate">新建普通文章</span>
-                            </nuxt-link>
-                        </el-dropdown-item>
-                        <el-dropdown-item>
-                            <nuxt-link
-                                v-slot="{ navigate }"
-                                to="/markdown"
-                                custom
-                            >
-                                <span @click="navigate">新建Markdown</span>
-                            </nuxt-link>
-                        </el-dropdown-item>
-                        <el-dropdown-item>
-                            <nuxt-link
-                                v-slot="{ navigate }"
-                                to="/mine/personal"
-                                custom
-                            >
-                                <span @click="navigate">个人主页</span>
-                            </nuxt-link>
-                        </el-dropdown-item>
-                        <el-dropdown-item divided @click.native="logout">
-                            退出
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </ul>
-        </div>
+  <div class="headers">
+    <div class="header_menu">
+      <div class="logo">
+        <img :src="logo">
+      </div>
+      <ul>
+        <nuxt-link v-slot="{ navigate, isExactActive }" custom to="/">
+          <li
+            :class="[isExactActive && 'nuxt-link-exact-active']"
+            @click="navigate"
+          >
+            首页
+          </li>
+        </nuxt-link>
+        <nuxt-link
+          v-slot="{ navigate, isActive }"
+          to="/technology"
+          custom
+        >
+          <li
+            :class="[isActive && 'nuxt-link-exact-active']"
+            @click="navigate"
+          >
+            优秀笔记
+          </li>
+        </nuxt-link>
+        <nuxt-link v-slot="{ navigate, isActive }" to="/doc" custom>
+          <li
+            :class="[isActive && 'nuxt-link-exact-active']"
+            @click="navigate"
+          >
+            优秀文档
+          </li>
+        </nuxt-link>
+        <nuxt-link v-slot="{ navigate, isActive }" to="/link" custom>
+          <li
+            :class="[isActive && 'nuxt-link-exact-active']"
+            @click="navigate"
+          >
+            优秀友链
+          </li>
+        </nuxt-link>
+        <nuxt-link v-slot="{ navigate, isActive }" to="/about" custom>
+          <li
+            :class="[isActive && 'nuxt-link-exact-active']"
+            @click="navigate"
+          >
+            关于博主
+          </li>
+        </nuxt-link>
+        <li v-if="!token" @click="changeLogin">
+          登录/注册
+        </li>
+        <el-dropdown v-else trigger="click">
+          <div class="avator">
+            <el-avatar
+              :size="40"
+              :src="info.avatar ? info.avatar : circleUrl"
+            />
+          </div>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <nuxt-link
+                v-slot="{ navigate }"
+                to="/editor"
+                custom
+              >
+                <span @click="navigate">新建普通文章</span>
+              </nuxt-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <nuxt-link
+                v-slot="{ navigate }"
+                to="/markdown"
+                custom
+              >
+                <span @click="navigate">新建Markdown</span>
+              </nuxt-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <nuxt-link
+                v-slot="{ navigate }"
+                to="/mine/personal"
+                custom
+              >
+                <span @click="navigate">个人主页</span>
+              </nuxt-link>
+            </el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout">
+              退出
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </ul>
     </div>
+  </div>
 </template>
 <script>
 export default {
-    name: "Navbar",
-    data() {
-        return {
-            circleUrl: require("@/assets/head-bd.png"),
-            logo: require("@/assets/logo.png"),
-        };
-    },
+  name: 'Navbar',
+  data () {
+    return {
+      circleUrl: require('@/assets/head-bd.png'),
+      logo: require('@/assets/logo.png')
+    }
+  },
 
-    computed: {
-        token() {
-            return this.$store.state.token || "";
-        },
-        info() {
-            return this.$store.state.info || {};
-        },
+  computed: {
+    token () {
+      return this.$store.state.token || ''
     },
-    mounted() {
-        document.querySelector(".headers").onselectstart = () => {
-            return false;
-        };
+    info () {
+      return this.$store.state.info || {}
+    }
+  },
+  mounted () {
+    document.querySelector('.headers').onselectstart = () => {
+      return false
+    }
+  },
+  methods: {
+    changeLogin () {
+      this.$store.dispatch('changeSetting', {
+        key: 'showLogin',
+        value: true
+      })
     },
-    methods: {
-        changeLogin() {
-            this.$store.dispatch("settings/changeSetting", {
-                key: "showLogin",
-                value: true,
-            });
-        },
-        async logout() {
-            await this.$store.dispatch("logout");
-            this.$router.push("/");
-        },
-    },
-};
+    async logout () {
+      await this.$store.dispatch('resetToken')
+      this.$router.push('/')
+    }
+  }
+}
 </script>
 <style lang="less" scoped>
 .headers {
