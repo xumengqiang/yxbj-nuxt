@@ -1,18 +1,18 @@
 <template>
-    <div class="base">
-        <NavBar></NavBar>
-        <div class="main">
-            <Nuxt />
-        </div>
-        <Footer></Footer>
+  <div class="base">
+    <NavBar />
+    <div class="main">
+      <Nuxt />
     </div>
+    <Footer />
+  </div>
 </template>
 
 <script>
 
 export default {
-    name: "Link",
-};
+  name: 'Link'
+}
 </script>
 <style lang="less" scoped>
 .base {

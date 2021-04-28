@@ -180,7 +180,6 @@ export default {
         await this.beforeLike(comment)
         this.storeLikes(id)
       } catch (e) {
-        console.log(e)
       }
     },
     // * 删除评论或回复
@@ -189,7 +188,6 @@ export default {
         await this.beforeDelete(comment)
         this.deleteComment(id)
       } catch (e) {
-        console.log(e)
       }
     },
     // * 保存点赞

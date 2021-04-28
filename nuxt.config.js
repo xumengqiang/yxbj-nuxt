@@ -16,10 +16,10 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
-    script:[
-        {
-            src: 'https://file.youxiubiji.com/js/qrcode.min.js'
-        }
+    script: [
+      {
+        src: 'https://file.youxiubiji.com/js/qrcode.min.js'
+      }
     ]
   },
   router: {
