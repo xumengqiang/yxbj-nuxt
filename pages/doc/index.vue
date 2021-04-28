@@ -1,48 +1,58 @@
 <template>
-  <div class="doc">
-    <ul class="doc-ul">
-      <nuxt-link
-        v-for="(item, index) in screenList"
-        :key="index"
-        v-slot="{href, navigate }"
-        :to="`/document/${item.id}`"
-        target="_blank"
-        custom
-        class="doc-item miniprogram"
-        :style="{
-          backgroundImage: 'url(' + item.cover + ')',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center center',
-          backgroundSize: 'contain',
-        }"
-      >
-        <a
-          :href="href"
-          @click="navigate"
-        >
-          <h3 class="doc__title">
-            <i
-              class="doc__icon"
-              :style="{
-                backgroundImage: 'url(' + item.icon + ')',
-              }"
-            />
-            <span class="doc__text">{{ item.screenName }}</span>
-          </h3>
-        </a>
-      </nuxt-link>
-    </ul>
-  </div>
+    <div class="doc">
+        <ul class="doc-ul">
+            <nuxt-link
+                v-for="(item, index) in screenList"
+                :key="index"
+                v-slot="{ href, navigate }"
+                :to="`/document/${item.id}`"
+                target="_blank"
+                custom
+                class="doc-item miniprogram"
+                :style="{
+                    backgroundImage: 'url(' + item.cover + ')',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center center',
+                    backgroundSize: 'contain',
+                }"
+            >
+                <a :href="href" @click="navigate">
+                    <h3 class="doc__title">
+                        <i
+                            class="doc__icon"
+                            :style="{
+                                backgroundImage: 'url(' + item.icon + ')',
+                            }"
+                        />
+                        <span class="doc__text">{{ item.screenName }}</span>
+                    </h3>
+                </a>
+            </nuxt-link>
+        </ul>
+    </div>
 </template>
 <script>
-import { homeScreenAll } from 'api/screen'
+import { homeScreenAll } from "api/screen";
 export default {
-  name: 'Doc',
-  async asyncData () {
-    const result = await homeScreenAll()
-    return { screenList: result.data }
-  }
-}
+    name: "Doc",
+    head() {
+        return {
+            title: '优秀笔记-优秀文档',
+            meta: [
+                {
+                    hid: "description",
+                    name: "description",
+                    content: "优秀笔记,专注大前端热门技术,原创文章,分享经验心得",
+                },
+                { hid: "keywords", name: "keywords", content: "优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站" },
+            ],
+        };
+    },
+    async asyncData() {
+        const result = await homeScreenAll();
+        return { screenList: result.data };
+    },
+};
 </script>
 <style lang="less" scoped>
 .doc {

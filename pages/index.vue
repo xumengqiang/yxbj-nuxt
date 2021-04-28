@@ -1,73 +1,80 @@
 <template>
-  <div class="body">
-    <div class="body-lf">
-      <div class="nav-swiper">
-        <el-carousel
-          :interval="5000"
-          trigger="click"
-          height="330px"
-          :loop="true"
-        >
-          <el-carousel-item
-            v-for="(item, index) in swiperList"
-            :key="index"
-          >
-            <img
-              class="swiper-img"
-              :src="item.url"
-              @click="ChangeLink(item.link)"
-            >
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-      <div class="content">
-        <h3 class="content-title">
-          #最近更新
-        </h3>
-        <ArticleItem
-          v-for="item in list"
-          :key="item.id"
-          :item="item"
-        />
-      </div>
+    <div class="body">
+        <div class="body-lf">
+            <div class="nav-swiper">
+                <el-carousel
+                    :interval="5000"
+                    trigger="click"
+                    height="330px"
+                    :loop="true"
+                >
+                    <el-carousel-item
+                        v-for="(item, index) in swiperList"
+                        :key="index"
+                    >
+                        <img
+                            class="swiper-img"
+                            :src="item.url"
+                            @click="ChangeLink(item.link)"
+                        />
+                    </el-carousel-item>
+                </el-carousel>
+            </div>
+            <div class="content">
+                <h3 class="content-title">#最近更新</h3>
+                <ArticleItem v-for="item in list" :key="item.id" :item="item" />
+            </div>
+        </div>
+        <div class="body-rg">
+            <div class="clock">
+                <Clock />
+            </div>
+            <div class="pig">
+                <Pig />
+            </div>
+            <div class="whater">
+                <Weather />
+            </div>
+            <div class="wechat">
+                <Wechat :status="1" />
+            </div>
+        </div>
     </div>
-    <div class="body-rg">
-      <div class="clock">
-        <Clock />
-      </div>
-      <div class="pig">
-        <Pig />
-      </div>
-      <div class="whater">
-        <Weather />
-      </div>
-      <div class="wechat">
-        <Wechat :status="1" />
-      </div>
-    </div>
-  </div>
 </template>
 <script>
-import { newArticleLimit } from 'api/article'
-import { HomeSwiper } from 'api/swiper'
+import { newArticleLimit } from "api/article";
+import { HomeSwiper } from "api/swiper";
 export default {
-  name: 'Home',
-  async asyncData () {
-    const result = await Promise.all([
-      HomeSwiper(),
-      newArticleLimit({ limit: 10 })
-    ])
-    return { swiperList: result[0].data || [], list: result[1].data || [] }
-  },
-  methods: {
-    // 跳转链接
-    ChangeLink (link) {
-      if (link.includes('http')) {
-        window.open(link, '_blank')
-      }
-    }
-  }
-}
+    name: "Home",
+    head() {
+        return {
+            title: '优秀笔记-个人博客',
+            meta: [
+                {
+                    hid: "description",
+                    name: "description",
+                    content: "优秀笔记,专注大前端热门技术,原创文章,分享经验心得",
+                },
+                { hid: "keywords", name: "keywords", content: "优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站" },
+            ],
+        };
+    },
+    async asyncData() {
+        const result = await Promise.all([
+            HomeSwiper(),
+            newArticleLimit({ limit: 10 }),
+        ]);
+        return { swiperList: result[0].data || [], list: result[1].data || [] };
+    },
+    methods: {
+        // 跳转链接
+        ChangeLink(link) {
+            if (link.includes("http")) {
+                window.open(link, "_blank");
+            }
+        },
+    },
+};
 </script>
 <style lang="less" scoped>
 .body {

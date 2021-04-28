@@ -122,6 +122,26 @@ import throttle from "utils/throttle";
 export default {
     name: "Document",
     layout: "document",
+    head() {
+        return {
+            title: this.article.title || "优秀笔记-个人博客",
+            meta: [
+                {
+                    hid: "description",
+                    name: "description",
+                    content:
+                        this.article.describe ||
+                        "优秀笔记,专注大前端热门技术,原创文章,分享经验心得",
+                },
+                {
+                    hid: "keywords",
+                    name: "keywords",
+                    content:
+                        "优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站",
+                },
+            ],
+        };
+    },
     async asyncData({ route }) {
         const res = await screenNote({ screenId: route.params.id });
         const result = await notesInfo({ id: res.data[0].id });
@@ -404,29 +424,34 @@ export default {
             this.busy = true;
             comments_list(this.listQuery)
                 .then((res) => {
-                    let listdate = res.data.rows;
-                    listdate.forEach((item) => {
-                        item.like = item.comm_likes.length;
-                        item._liked = item.comm_likes.some(
-                            (v) => v.accountId === this.currentUser.id
-                        );
-                        item.replies
-                            .sort((a, b) =>
-                                b.createdAt < a.createdAt ? 1 : -1
-                            )
-                            .forEach((ele) => {
-                                ele.like = ele.reply_likes.length;
-                                ele._liked = ele.reply_likes.some(
-                                    (v) => v.accountId === this.currentUser.id
-                                );
-                            });
-                    });
-                    this.commentData =
-                        this.listQuery.pageIndex == 1
-                            ? [...listdate]
-                            : [...this.commentData, ...listdate];
-                    this.commentsTotal = res.data.count;
-                    this.busy = false;
+                    if (res.data.rows.length > 0) {
+                        let listdate = res.data.rows;
+                        listdate.forEach((item) => {
+                            item.like = item.comm_likes.length;
+                            item._liked = item.comm_likes.some(
+                                (v) => v.accountId === this.currentUser.id
+                            );
+                            item.replies
+                                .sort((a, b) =>
+                                    b.createdAt < a.createdAt ? 1 : -1
+                                )
+                                .forEach((ele) => {
+                                    ele.like = ele.reply_likes.length;
+                                    ele._liked = ele.reply_likes.some(
+                                        (v) =>
+                                            v.accountId === this.currentUser.id
+                                    );
+                                });
+                        });
+                        this.commentData =
+                            this.listQuery.pageIndex == 1
+                                ? [...listdate]
+                                : [...this.commentData, ...listdate];
+                        this.commentsTotal = res.data.count;
+                        this.busy = false;
+                    } else {
+                        this.busy = true;
+                    }
                 })
                 .catch(() => {});
         },
