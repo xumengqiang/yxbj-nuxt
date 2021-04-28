@@ -181,10 +181,10 @@ export default {
                 }
             }
             .content {
-                margin-top: 10px;
+                margin-top: -20px;
                 font-size: 16px;
                 line-height: 28px;
-                // white-space: pre-line;
+                white-space: pre-line;
                 word-break: break-all;
                 color: #333;
                 overflow: hidden;

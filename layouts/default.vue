@@ -1,34 +1,31 @@
 <template>
-  <div class="base">
-    <NavBar />
-    <div class="main">
-      <Nuxt />
+    <div class="base">
+        <NavBar />
+        <div class="main">
+            <Nuxt />
+        </div>
+        <Footer />
+        <Login v-if="showLogin" @close="changeClose" />
     </div>
-    <Footer />
-    <Login
-      v-if="showLogin"
-      @close="changeClose"
-    />
-  </div>
 </template>
 
 <script>
 export default {
-  name: 'Default',
-  computed: {
-    showLogin () {
-      return this.$store.state.showLogin
-    }
-  },
-  methods: {
-    changeClose () {
-      this.$store.dispatch('changeSetting', {
-        key: 'showLogin',
-        value: false
-      })
-    }
-  }
-}
+    name: "Default",
+    computed: {
+        showLogin() {
+            return this.$store.state.showLogin;
+        },
+    },
+    methods: {
+        changeClose() {
+            this.$store.dispatch("changeSetting", {
+                key: "showLogin",
+                value: false,
+            });
+        },
+    },
+};
 </script>
 <style lang="less" scoped>
 .base {

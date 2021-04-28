@@ -1,82 +1,82 @@
 <template>
-  <div :class="`${className} comment-form`">
-    <div class="avatar-box">
-      <slot />
-    </div>
+    <div :class="`${className} comment-form`">
+        <div class="avatar-box">
+            <slot />
+        </div>
 
-    <div class="form-box">
-      <div class="rich-input" :class="{ focus: focus || value }">
-        <div class="grow-wrap" :data-replicated-value="value">
-          <textarea
-            ref="input"
-            rows="1"
-            :value="value"
-            :placeholder="placeholder"
-            @input="(e) => (value = e.target.value)"
-            @focus="focus = true"
-            @blur="handleBlur"
-            @mousedown="closeEmojiSelector"
-          />
-        </div>
-        <div
-          v-show="imgSrc"
-          ref="image-preview-box"
-          class="image-preview-box"
-        >
-          <div
-            v-show="imgSrc"
-            :style="`background-image: url(${imgSrc})`"
-            class="image"
-          />
-          <div class="clean-btn" @mousedown.prevent="removeImg">
-            <svg
-              aria-hidden="true"
-              width="15"
-              height="15"
-              viewBox="0 0 21 21"
-              class="icon close-icon"
+        <div class="form-box">
+            <div class="rich-input" :class="{ focus: focus || value }">
+                <div class="grow-wrap" :data-replicated-value="value">
+                    <textarea
+                        ref="input"
+                        rows="1"
+                        :value="value"
+                        :placeholder="placeholder"
+                        @input="(e) => (value = e.target.value)"
+                        @focus="focus = true"
+                        @blur="handleBlur"
+                        @mousedown="closeEmojiSelector"
+                    />
+                </div>
+                <div
+                    v-show="imgSrc"
+                    ref="image-preview-box"
+                    class="image-preview-box"
+                >
+                    <div
+                        v-show="imgSrc"
+                        :style="`background-image: url(${imgSrc})`"
+                        class="image"
+                    />
+                    <div class="clean-btn" @mousedown.prevent="removeImg">
+                        <svg
+                            aria-hidden="true"
+                            width="15"
+                            height="15"
+                            viewBox="0 0 21 21"
+                            class="icon close-icon"
+                        >
+                            <g
+                                fill="none"
+                                fill-rule="evenodd"
+                                transform="translate(1 1)"
+                            >
+                                <circle
+                                    cx="9.5"
+                                    cy="9.5"
+                                    r="9.5"
+                                    fill="#000"
+                                    stroke="#FFF"
+                                    opacity=".5"
+                                />
+                                <path
+                                    fill="#FFF"
+                                    d="M13.743 5.964L10.207 9.5l3.536 3.536-.707.707L9.5 10.207l-3.536 3.536-.707-.707L8.793 9.5 5.257 5.964l.707-.707L9.5 8.793l3.536-3.536z"
+                                />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div
+                v-show="focus || value || imgSrc"
+                class="option-box"
+                @mousedown.prevent="closeEmojiSelector($refs.input.focus())"
             >
-              <g
-                fill="none"
-                fill-rule="evenodd"
-                transform="translate(1 1)"
-              >
-                <circle
-                  cx="9.5"
-                  cy="9.5"
-                  r="9.5"
-                  fill="#000"
-                  stroke="#FFF"
-                  opacity=".5"
-                />
-                <path
-                  fill="#FFF"
-                  d="M13.743 5.964L10.207 9.5l3.536 3.536-.707.707L9.5 10.207l-3.536 3.536-.707-.707L8.793 9.5 5.257 5.964l.707-.707L9.5 8.793l3.536-3.536z"
-                />
-              </g>
-            </svg>
-          </div>
-        </div>
-      </div>
-      <div
-        v-show="focus || value || imgSrc"
-        class="option-box"
-        @mousedown.prevent="closeEmojiSelector($refs.input.focus())"
-      >
-        <div
-          class="emoji emoji-btn"
-          @mousedown.prevent.stop="openEmojiSelector"
-        >
-          <div class="emoji-box">
-            <div class="icon" />
-            <span>表情</span>
-          </div>
-          <EmojiSelector
-            v-show="showEmojiSelector"
-            @choose="(v) => (value += v)"
-          />
-        </div>
-        <!-- <div class="image-btn" @mousedown.prevent="triggerUpload">
+                <div
+                    class="emoji emoji-btn"
+                    @mousedown.prevent.stop="openEmojiSelector"
+                >
+                    <div class="emoji-box">
+                        <div class="icon" />
+                        <span>表情</span>
+                    </div>
+                    <EmojiSelector
+                        v-show="showEmojiSelector"
+                        @choose="(v) => (value += v)"
+                    />
+                </div>
+                <!-- <div class="image-btn" @mousedown.prevent="triggerUpload">
                     <svg
                         aria-hidden="true"
                         width="22"
@@ -110,221 +110,227 @@
                         @click="onUpload = true"
                     />
                 </div> -->
-        <slot name="submitBtn">
-          <button
-            class="submit-btn"
-            :disabled="!value && !imgSrc"
-            @click.stop="handleSubmit"
-          >
-            评论
-          </button>
-        </slot>
-      </div>
+                <slot name="submitBtn">
+                    <button
+                        class="submit-btn"
+                        :disabled="!value && !imgSrc"
+                        @click.stop="handleSubmit"
+                    >
+                        评论
+                    </button>
+                </slot>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
-import EmojiSelector from './EmojiSelector'
+import EmojiSelector from "./EmojiSelector";
 export default {
-  name: 'CommentForm',
-  components: { EmojiSelector },
-  props: {
-    placeholder: {
-      type: String,
-      default: '输入评论...'
+    name: "CommentForm",
+    components: { EmojiSelector },
+    props: {
+        placeholder: {
+            type: String,
+            default: "输入评论...",
+        },
+        id: {
+            type: [String, Number],
+            default: "comment-root",
+        },
+        comment: {
+            type: Object,
+            default: () => {},
+        },
+        uploadImg: {
+            type: Function,
+            default: null,
+        },
+        type: {
+            type: [String, Number],
+            default: 1,
+        },
+        commentsId: {
+            type: [String, Number],
+            default: 0,
+        },
+        beaccountId: {
+            type: [String, Number],
+            default: 0,
+        },
+        account: {
+            type: Object,
+            default: () => {},
+        },
     },
-    id: {
-      type: [String, Number],
-      default: 'comment-root'
+    data() {
+        return {
+            focus: false, // * 聚焦状态
+            value: "", // * 输入框值
+            imgSrc: "", // * 粘贴的图片src
+            showEmojiSelector: false, // * 表情选择框状态
+            circleUrl: require("@/assets/head-bd.png"),
+        };
     },
-    comment: {
-      type: Object,
-      default: () => {}
+    computed: {
+        // 是否为顶部评论表单
+        isRoot() {
+            return this.id === "comment-root";
+        },
+        // 是否为回复中的表单
+        isSub() {
+            return this.id.split("-").length === 3;
+        },
+        className() {
+            return this.isRoot
+                ? "comment-root"
+                : this.isSub
+                ? "reply sub-reply"
+                : "reply";
+        },
     },
-    uploadImg: {
-      type: Function,
-      default: null
-    },
-    type: {
-      type: [String, Number],
-      default: 1
-    },
-    commentsId: {
-      type: [String, Number],
-      default: 0
-    },
-    beaccountId: {
-      type: [String, Number],
-      default: 0
-    },
-    account: {
-      type: Object,
-      default: () => {}
-    }
-  },
-  data () {
-    return {
-      focus: false, // * 聚焦状态
-      value: '', // * 输入框值
-      imgSrc: '', // * 粘贴的图片src
-      showEmojiSelector: false, // * 表情选择框状态
-      circleUrl: require('@/assets/head-bd.png')
-    }
-  },
-  computed: {
-    // 是否为顶部评论表单
-    isRoot () {
-      return this.id === 'comment-root'
-    },
-    // 是否为回复中的表单
-    isSub () {
-      return this.id.split('-').length === 3
-    },
-    className () {
-      return this.isRoot
-        ? 'comment-root'
-        : this.isSub
-          ? 'reply sub-reply'
-          : 'reply'
-    }
-  },
-  mounted () {
-    const richInput = this.$refs.input
-    !this.isRoot && richInput.focus()
+    mounted() {
+        const richInput = this.$refs.input;
+        !this.isRoot && richInput.focus();
 
-    richInput.addEventListener('paste', this.handlePaste)
-    this.$once('hook:beforeDestroy', () =>
-      richInput.removeEventListener('paste', this.handlePaste)
-    )
-  },
-  methods: {
-    // * 选择要上传的图片
-    handleChange (e) {
-      const files = e.target.files
-      if (!(files && files[0])) { return }
-      this.beforeSetImg(files[0])
+        richInput.addEventListener("paste", this.handlePaste);
+        this.$once("hook:beforeDestroy", () =>
+            richInput.removeEventListener("paste", this.handlePaste)
+        );
     },
-    // * 处理图片
-    async beforeSetImg (file) {
-      if (!/^image/.test(file.type)) {
-        throw new Error("file type must contain 'image'.")
-      }
+    methods: {
+        // * 选择要上传的图片
+        handleChange(e) {
+            const files = e.target.files;
+            if (!(files && files[0])) {
+                return;
+            }
+            this.beforeSetImg(files[0]);
+        },
+        // * 处理图片
+        async beforeSetImg(file) {
+            if (!/^image/.test(file.type)) {
+                throw new Error("file type must contain 'image'.");
+            }
 
-      if (typeof this.uploadImg === 'function') {
-        const callback = (src) => {
-          this.imgSrc = src
-        }
-        await this.uploadImg({ file, callback })
-        return
-      }
+            if (typeof this.uploadImg === "function") {
+                const callback = (src) => {
+                    this.imgSrc = src;
+                };
+                await this.uploadImg({ file, callback });
+                return;
+            }
 
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        this.imgSrc = reader.result
-      }
-      reader.onerror = () => {
-        throw new Error(
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                this.imgSrc = reader.result;
+            };
+            reader.onerror = () => {
+                throw new Error(
                     `read file errored, the error code is ${reader.error.code}.`
-        )
-      }
-    },
-    // * 点击图片触发上传
-    triggerUpload () {
-      this.$refs.upload.click()
-    },
-    // * 点击图片上的删除按钮
-    removeImg () {
-      this.imgSrc = ''
-      this.closeEmojiSelector()
-    },
-    // * textarea blur 事件
-    handleBlur () {
-      this.showEmojiSelector = false
+                );
+            };
+        },
+        // * 点击图片触发上传
+        triggerUpload() {
+            this.$refs.upload.click();
+        },
+        // * 点击图片上的删除按钮
+        removeImg() {
+            this.imgSrc = "";
+            this.closeEmojiSelector();
+        },
+        // * textarea blur 事件
+        handleBlur() {
+            this.showEmojiSelector = false;
 
-      if (this.onUpload) {
-        this.$nextTick(() => {
-          this.onUpload = false
-        })
-        return
-      }
+            if (this.onUpload) {
+                this.$nextTick(() => {
+                    this.onUpload = false;
+                });
+                return;
+            }
 
-      if (this.value || this.imgSrc) { return }
+            if (this.value || this.imgSrc) {
+                return;
+            }
 
-      this.focus = false
+            this.focus = false;
 
-      if (!this.isRoot) {
-        this.close()
-      }
+            if (!this.isRoot) {
+                this.close();
+            }
+        },
+        // * textarea paste 事件
+        handlePaste(e) {
+            const file = e.clipboardData.files[0];
+            if (file) {
+                // 只处理复制图片
+                this.beforeSetImg(file);
+                e.preventDefault();
+            }
+        },
+        // * 点击评论
+        handleSubmit() {
+            if (!this.value && !this.imgSrc) {
+                return;
+            }
+            const user = (this.comment && this.comment.user) || null;
+
+            const data = {
+                id: this.id,
+                type: this.type,
+                account: this.account,
+                commentsId: this.commentsId,
+                beaccountId: this.beaccountId,
+                content: this.value,
+                imgSrc: this.imgSrc,
+                reply: (this.isSub && JSON.parse(JSON.stringify(user))) || null,
+                createAt: new Date().getTime(),
+                likes: 0,
+                callback: () => {
+                    this.isRoot ? this.reset() : this.close();
+                },
+            };
+
+            if (!this.isSub) {
+                data.children = [];
+            }
+
+            this.$emit("form-submit", data);
+        },
+        // * 重置组件状态
+        reset() {
+            this.value = "";
+            this.imgSrc = "";
+            this.$refs.input.blur();
+        },
+        // * 销毁组件
+        close() {
+            this.$emit("form-delete", this.id);
+        },
+        // * 选择表情
+        openEmojiSelector() {
+            this.showEmojiSelector = !this.showEmojiSelector;
+
+            if (document.activeElement === document.body) {
+                this.$refs.input.focus();
+            }
+            if (this.showEmojiSelector) {
+                // 移动光标到末尾
+                const input = this.$refs.input;
+                input.selectionStart = input.selectionEnd = this.value.length;
+            }
+        },
+        // * 关闭选择表情组件
+        closeEmojiSelector() {
+            if (this.showEmojiSelector) {
+                this.showEmojiSelector = false;
+            }
+        },
     },
-    // * textarea paste 事件
-    handlePaste (e) {
-      const file = e.clipboardData.files[0]
-      if (file) {
-        // 只处理复制图片
-        this.beforeSetImg(file)
-        e.preventDefault()
-      }
-    },
-    // * 点击评论
-    handleSubmit () {
-      if (!this.value && !this.imgSrc) { return }
-      const user = (this.comment && this.comment.user) || null
-
-      const data = {
-        id: this.id,
-        type: this.type,
-        account: this.account,
-        commentsId: this.commentsId,
-        beaccountId: this.beaccountId,
-        content: this.value,
-        imgSrc: this.imgSrc,
-        reply: (this.isSub && JSON.parse(JSON.stringify(user))) || null,
-        createAt: new Date().getTime(),
-        likes: 0,
-        callback: () => {
-          this.isRoot ? this.reset() : this.close()
-        }
-      }
-
-      if (!this.isSub) {
-        data.children = []
-      }
-
-      this.$emit('form-submit', data)
-    },
-    // * 重置组件状态
-    reset () {
-      this.value = ''
-      this.imgSrc = ''
-      this.$refs.input.blur()
-    },
-    // * 销毁组件
-    close () {
-      this.$emit('form-delete', this.id)
-    },
-    // * 选择表情
-    openEmojiSelector () {
-      this.showEmojiSelector = !this.showEmojiSelector
-
-      if (document.activeElement === document.body) {
-        this.$refs.input.focus()
-      }
-      if (this.showEmojiSelector) {
-        // 移动光标到末尾
-        const input = this.$refs.input
-        input.selectionStart = input.selectionEnd = this.value.length
-      }
-    },
-    // * 关闭选择表情组件
-    closeEmojiSelector () {
-      if (this.showEmojiSelector) {
-        this.showEmojiSelector = false
-      }
-    }
-  }
-}
+};
 </script>
 <style lang="less" scoped>
 .comment-form {
@@ -352,12 +358,19 @@ export default {
             }
             .grow-wrap {
                 display: flex;
+                width: 100%;
+                position: relative;
                 &::after {
                     content: attr(data-replicated-value) " ";
                     white-space: pre-wrap;
                     visibility: hidden;
                 }
                 textarea {
+                    position:absolute;
+                    top:0;
+                    left:0;
+                    width: 100%;
+                    height: 100%;
                     outline: none;
                     border: none;
                     resize: none;
@@ -370,7 +383,7 @@ export default {
                 & > textarea,
                 &::after {
                     font: inherit;
-                    grid-area: 1 / 1 / 2 / 2;
+                    flex: 1;
                     padding: 8px 12px;
                     min-height: 20px;
                     line-height: 1.7;
