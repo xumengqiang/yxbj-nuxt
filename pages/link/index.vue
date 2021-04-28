@@ -404,7 +404,7 @@ export default {
         display: flex;
         justify-content: center;
         margin-top: 10px;
-        background-image: url("../../assets/background/5.jpg");
+        background-image: url("https://file.youxiubiji.com/nuxt/background/5.jpg");
         .body-top {
             width: 1200px;
             height: 100%;

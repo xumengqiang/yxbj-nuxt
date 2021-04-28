@@ -143,26 +143,33 @@ export default {
         };
     },
     async asyncData({ route }) {
-        const res = await screenNote({ screenId: route.params.id });
-        const result = await notesInfo({ id: res.data[0].id });
-        let content = "";
-        let artMarked;
-        if (result.data.type === 1) {
-            content = res.data.contentText;
-        } else {
-            //处理markdown数据，data为markdown文件读出的字符串
-            artMarked = await markdown.marked(result.data.contentMd);
-        }
-        return {
-            screenList: res.data,
-            pid: res.data[0].id,
-            article: result.data,
-            content: content || artMarked.content,
-            toc: artMarked.toc,
-        };
+        try {
+            const res = await screenNote({ screenId: route.params.id });
+            const result = await notesInfo({ id: res.data[0].id });
+            let content = "";
+            let artMarked;
+            if (result.data.type === 1) {
+                content = result.data.contentText;
+            } else {
+                //处理markdown数据，data为markdown文件读出的字符串
+                artMarked = await markdown.marked(result.data.contentMd);
+            }
+            return {
+                screenList: res.data,
+                pid: res.data[0].id,
+                article: result.data,
+                content: content || artMarked.content,
+                toc: artMarked.toc,
+            };
+        } catch (error) {}
     },
     data() {
         return {
+            // screenList: [],
+            // pid: 0,
+            // article: {},
+            // content: "",
+            // toc: "",
             highlightIndex: "", //文章目标下标
             loading: false, //加载loading
             commentData: [], //评论数组
@@ -186,6 +193,7 @@ export default {
         };
     },
     created() {
+        //  this.getAllacreen();
         this.getComments();
     },
     computed: {
@@ -214,6 +222,15 @@ export default {
             this.busy = false;
             this.getNoteInfo();
             document.querySelector(".doc-rg").scrollTop = 0;
+        },
+        getAllacreen() {
+            screenNote({ screenId: this.$route.params.id })
+                .then((res) => {
+                    this.screenList = res.data;
+                    this.pid = res.data[0].id;
+                    this.getNoteInfo();
+                })
+                .catch((err) => console.log(err));
         },
         getNoteInfo() {
             notesInfo({ id: this.pid })

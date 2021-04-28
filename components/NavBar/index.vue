@@ -101,8 +101,8 @@ export default {
   name: 'Navbar',
   data () {
     return {
-      circleUrl: require('@/assets/head-bd.png'),
-      logo: require('@/assets/logo.png')
+      circleUrl: 'https://file.youxiubiji.com/nuxt/head-bd.png',
+      logo: 'https://file.youxiubiji.com/nuxt/logo.png'
     }
   },
 

@@ -5,7 +5,7 @@
     </div>
     <div class="tarager">
       <div class="love" />
-      <img class="gif" src="../../assets/404_images/love.gif">
+      <img class="gif" src="https://file.youxiubiji.com/nuxt/404_images/love.gif">
       <div class="lovegrol" />
     </div>
     <p>{{ msg }}</p>

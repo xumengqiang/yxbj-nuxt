@@ -122,57 +122,65 @@ export default {
     name: "About",
     head() {
         return {
-            title: '优秀笔记-关于博主',
+            title: "优秀笔记-关于博主",
             meta: [
                 {
                     hid: "description",
                     name: "description",
-                    content: "优秀笔记,专注大前端热门技术,原创文章,分享经验心得",
+                    content:
+                        "优秀笔记,专注大前端热门技术,原创文章,分享经验心得",
                 },
-                { hid: "keywords", name: "keywords", content: '优秀笔记,个人博客,博主,个人介绍,前端,vue,全栈,小程序' },
+                {
+                    hid: "keywords",
+                    name: "keywords",
+                    content:
+                        "优秀笔记,个人博客,博主,个人介绍,前端,vue,全栈,小程序",
+                },
             ],
         };
     },
     async asyncData({ store }) {
-        const currentUser = store.state.info || {};
-        const result = await Promise.all([
-            articleInfo({
-                id: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
-            }),
-            comments_list({
-                pageIndex: 1,
-                pageSize: 10,
-                discuss: 1,
-                articleId: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
-            }),
-        ]);
-        // 处理markdown数据，data为markdown文件读出的字符串
-        const artMarked = await markdown.marked(result[0].data.contentMd);
+        try {
+            const currentUser = store.state.info || {};
+            const result = await Promise.all([
+                articleInfo({
+                    id: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
+                }),
+                comments_list({
+                    pageIndex: 1,
+                    pageSize: 10,
+                    discuss: 1,
+                    articleId: "265c67b0-9b6e-11eb-aff3-094ffeceb988",
+                }),
+            ]);
+            // 处理markdown数据，data为markdown文件读出的字符串
+            const artMarked = await markdown.marked(result[0].data.contentMd);
 
-        const listdate = result[1].data.rows;
-        listdate.forEach((item) => {
-            item.like = item.comm_likes.length;
-            item._liked = item.comm_likes.some(
-                (v) => v.accountId === currentUser.id
-            );
-            item.replies
-                .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
-                .forEach((ele) => {
-                    ele.like = ele.reply_likes.length;
-                    ele._liked = ele.reply_likes.some(
-                        (v) => v.accountId === currentUser.id
-                    );
-                });
-        });
+            const listdate = result[1].data.rows;
+            listdate.forEach((item) => {
+                item.like = item.comm_likes.length;
+                item._liked = item.comm_likes.some(
+                    (v) => v.accountId === currentUser.id
+                );
+                item.replies
+                    .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
+                    .forEach((ele) => {
+                        ele.like = ele.reply_likes.length;
+                        ele._liked = ele.reply_likes.some(
+                            (v) => v.accountId === currentUser.id
+                        );
+                    });
+            });
 
-        return {
-            article: result[0].data || {},
-            content: artMarked.content,
-            toc: artMarked.toc,
-            commentData: listdate,
-            commentsTotal: result[1].data.count,
-            busy: !(result[1].data.rows.length > 0),
-        };
+            return {
+                article: result[0].data || {},
+                content: artMarked.content,
+                toc: artMarked.toc,
+                commentData: listdate,
+                commentsTotal: result[1].data.count,
+                busy: !(result[1].data.rows.length > 0),
+            };
+        } catch (error) {}
     },
     data() {
         return {
@@ -197,7 +205,7 @@ export default {
     },
     computed: {
         currentUser() {
-            return this.$store.getters.info;
+            return this.$store.state.info;
         },
     },
     mounted() {
@@ -401,8 +409,7 @@ export default {
                                 .forEach((ele) => {
                                     ele.like = ele.reply_likes.length;
                                     ele._liked = ele.reply_likes.some(
-                                        (v) =>
-                                            v.accountId === this.currentUser.id
+                                        (v) => v.accountId === currentUser.id
                                     );
                                 });
                         });
@@ -427,7 +434,7 @@ export default {
         },
     },
 };
-</>
+</script>
 
 <style lang="less" scoped>
 .body {

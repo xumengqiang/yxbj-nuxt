@@ -143,7 +143,7 @@ export default {
     },
     data() {
         return {
-            circleUrl: require("@/assets/head-bd.png"),
+            circleUrl: 'https://file.youxiubiji.com/nuxt/head-bd.png',
         };
     },
     computed: {

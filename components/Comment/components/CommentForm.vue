@@ -169,7 +169,7 @@ export default {
             value: "", // * 输入框值
             imgSrc: "", // * 粘贴的图片src
             showEmojiSelector: false, // * 表情选择框状态
-            circleUrl: require("@/assets/head-bd.png"),
+            circleUrl: 'https://file.youxiubiji.com/nuxt/head-bd.png',
         };
     },
     computed: {

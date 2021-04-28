@@ -19,7 +19,7 @@ export default {
         ],
         script: [
             {
-                src: 'https://file.youxiubiji.com/js/qrcode.min.js'
+                src: '//file.youxiubiji.com/js/qrcode.min.js'
             }
         ]
     },
@@ -34,9 +34,9 @@ export default {
     // Global CSS: https://go.nuxtjs.dev/config-css
     css: [
         'element-ui/lib/theme-chalk/index.css',
-        '@/assets/css/index.less',
+        '~/assets/css/index.less',
         'viewerjs/dist/viewer.css',
-        '@/assets/css/article.less'
+        '~/assets/css/article.less'
     ],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins

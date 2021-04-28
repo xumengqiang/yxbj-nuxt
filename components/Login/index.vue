@@ -3,12 +3,12 @@
     <div class="auth-form">
       <el-form ref="loginForm" :model="loginForm" :rules="rules">
         <div class="panfish">
-          <img v-if="isGifType === 1" src="../../assets/open.png">
+          <img v-if="isGifType === 1" src="https://file.youxiubiji.com/nuxt/open.png">
           <img
             v-else-if="isGifType === 2"
-            src="../../assets/sec.png"
+            src="https://file.youxiubiji.com/nuxt/sec.png"
           >
-          <img v-else src="../../assets/def.png">
+          <img v-else src="https://file.youxiubiji.com/nuxt/def.png">
         </div>
         <div class="auth-nav">
           <div class="title">
@@ -16,7 +16,7 @@
           </div>
           <img
             class="close"
-            src="../../assets/close.png"
+            src="https://file.youxiubiji.com/nuxt/close.png"
             @click="close"
           >
         </div>

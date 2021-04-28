@@ -16,8 +16,8 @@ export default {
   },
   data () {
     return {
-      wechatImg: require('../../assets/wechat.png'),
-      wechatff: require('../../assets/wechat_ff.png')
+      wechatImg: 'https://file.youxiubiji.com/nuxt/wechat.png',
+      wechatff: 'https://file.youxiubiji.com/nuxt/wechat_ff.png'
     }
   }
 }
