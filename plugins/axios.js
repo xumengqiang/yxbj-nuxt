@@ -22,6 +22,12 @@ export default ({ $axios, redirect, store }) => {
         const res = (response && response.data) || {}
         if (res.code === 200) {
             return res
+        } else if (res.code === 404) {
+            redirect('/404')
+            if (IS_ClIENT) {
+                return Promise.reject(res)
+            }
+            return false
         } else {
             if (IS_ClIENT) {
                 return Promise.reject(res)

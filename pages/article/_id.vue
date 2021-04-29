@@ -167,14 +167,21 @@ export default {
     name: "Article",
     head() {
         return {
-            title: this.article.title || '优秀笔记-个人博客',
+            title: this.article.title || "优秀笔记-个人博客",
             meta: [
                 {
                     hid: "description",
                     name: "description",
-                    content: this.article.describe || '优秀笔记,专注大前端热门技术,原创文章,分享经验心得',
+                    content:
+                        this.article.describe ||
+                        "优秀笔记,专注大前端热门技术,原创文章,分享经验心得",
                 },
-                { hid: "keywords", name: "keywords", content: "优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站" },
+                {
+                    hid: "keywords",
+                    name: "keywords",
+                    content:
+                        "优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站",
+                },
             ],
         };
     },
@@ -184,60 +191,62 @@ export default {
         },
     },
     async asyncData({ route, store }) {
-        const currentUser = store.state.info || {};
-        const result = await Promise.all([
-            articleInfo({ id: route.params.id }),
-            article_like_Aarray({ articleId: route.params.id }),
-            article_collection_Aarray({
-                articleId: route.params.id,
-            }),
-            comments_list({
-                pageIndex: 1,
-                pageSize: 10,
-                discuss: 1,
-                articleId: route.params.id,
-            }),
-        ]);
-        let content = "";
-        let artMarked = "";
-        if (result[0].data.type === 1) {
-            content = result[0].data.contentText;
-        } else {
-            // 处理markdown数据，data为markdown文件读出的字符串
-            artMarked = await markdown.marked(result[0].data.contentMd);
-        }
+        try {
+            const currentUser = store.state.info || {};
+            const result = await Promise.all([
+                articleInfo({ id: route.params.id }),
+                article_like_Aarray({ articleId: route.params.id }),
+                article_collection_Aarray({
+                    articleId: route.params.id,
+                }),
+                comments_list({
+                    pageIndex: 1,
+                    pageSize: 10,
+                    discuss: 1,
+                    articleId: route.params.id,
+                }),
+            ]);
+            let content = "";
+            let artMarked = "";
+            if (result[0].data.type === 1) {
+                content = result[0].data.contentText;
+            } else {
+                // 处理markdown数据，data为markdown文件读出的字符串
+                artMarked = await markdown.marked(result[0].data.contentMd);
+            }
 
-        const listdate = result[3].data.rows;
-        listdate.forEach((item) => {
-            item.like = item.comm_likes.length;
-            item._liked = item.comm_likes.some(
-                (v) => v.accountId === currentUser.id
-            );
-            item.replies
-                .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
-                .forEach((ele) => {
-                    ele.like = ele.reply_likes.length;
-                    ele._liked = ele.reply_likes.some(
-                        (v) => v.accountId === currentUser.id
-                    );
-                });
-        });
+            const listdate = result[3].data.rows;
+            listdate.forEach((item) => {
+                item.like = item.comm_likes.length;
+                item._liked = item.comm_likes.some(
+                    (v) => v.accountId === currentUser.id
+                );
+                item.replies
+                    .sort((a, b) => (b.createdAt < a.createdAt ? 1 : -1))
+                    .forEach((ele) => {
+                        ele.like = ele.reply_likes.length;
+                        ele._liked = ele.reply_likes.some(
+                            (v) => v.accountId === currentUser.id
+                        );
+                    });
+            });
 
-        return {
-            article: result[0].data,
-            content: content || artMarked.content,
-            toc: artMarked.toc,
-            ArticlelikeCount: result[1].data.length,
-            isArticleLike: result[1].data.some(
-                (v) => v.accountId === currentUser.id
-            ),
-            isArticleCollection: result[2].data.some(
-                (v) => v.accountId === currentUser.id
-            ),
-            commentData: listdate,
-            commentsTotal: result[3].data.count,
-            busy: !(result[3].data.rows.length > 0),
-        };
+            return {
+                article: result[0].data,
+                content: content || artMarked.content,
+                toc: artMarked.toc,
+                ArticlelikeCount: result[1].data.length,
+                isArticleLike: result[1].data.some(
+                    (v) => v.accountId === currentUser.id
+                ),
+                isArticleCollection: result[2].data.some(
+                    (v) => v.accountId === currentUser.id
+                ),
+                commentData: listdate,
+                commentsTotal: result[3].data.count,
+                busy: !(result[3].data.rows.length > 0),
+            };
+        } catch (error) {}
     },
     data() {
         return {
@@ -647,7 +656,7 @@ export default {
                 background-position: 50%;
                 background-repeat: no-repeat;
                 border-radius: 50%;
-                box-shadow: 0 2px 4px 0 rgb(0 0 0 / 4%);
+                box-shadow: 0 2px 4px 0 rgba(0 0 0 0.04);
                 cursor: pointer;
             }
             .like-adjust {
