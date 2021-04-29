@@ -8,7 +8,7 @@ export default ({ $axios, redirect, store }) => {
     const IS_ClIENT = process.client;
     axios = $axios
     $axios.onRequest((config) => {
-        if (config.method !== 'get') { config.data = qs.stringify(config.data) }
+        if (config.method !== 'get' && !config.headers['Is-File']) { config.data = qs.stringify(config.data) }
 
         if (store.state.token) {
             config.headers.authorization = `Bearer ${store.state.token}`

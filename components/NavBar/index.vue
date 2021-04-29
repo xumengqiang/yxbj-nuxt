@@ -63,7 +63,7 @@
             <el-dropdown-item>
               <nuxt-link
                 v-slot="{ navigate }"
-                to="/editor"
+                to="/aticleeditor"
                 custom
               >
                 <span @click="navigate">新建普通文章</span>

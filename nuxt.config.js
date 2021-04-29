@@ -19,7 +19,8 @@ export default {
         ],
         script: [
             {
-                src: '//file.youxiubiji.com/js/qrcode.min.js'
+                src: '//file.youxiubiji.com/js/qrcode.min.js',
+                src: '//file.youxiubiji.com/CDN/js/tinymce/tinymce.min.js'
             }
         ]
     },
