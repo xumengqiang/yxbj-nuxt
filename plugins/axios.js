@@ -13,8 +13,6 @@ export default ({ $axios, redirect, store }) => {
         if (store.state.token) {
             config.headers.authorization = `Bearer ${store.state.token}`
         }
-
-        console.log('Making request to ' + config.url)
         return config
     })
 

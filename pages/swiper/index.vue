@@ -247,9 +247,7 @@ export default {
                         type: "success",
                     });
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
         /**
          * 编辑
@@ -271,9 +269,7 @@ export default {
                         type: "success",
                     });
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
     },
 };

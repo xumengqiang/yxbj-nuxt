@@ -20,7 +20,7 @@ export default {
         ],
         script: [
             {
-                src: '//file.youxiubiji.com/js/qrcode.min.js',
+                // src: '//file.youxiubiji.com/js/qrcode.min.js',
                 src: '//file.youxiubiji.com/CDN/js/tinymce/tinymce.min.js'
             }
         ]
@@ -43,7 +43,7 @@ export default {
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
     plugins: [
-        '@/plugins/element-ui',
+        { src: '@/plugins/element-ui', ssr: true },
         '@/plugins/v-viewer',
         '@/plugins/axios'
     ],
@@ -74,6 +74,22 @@ export default {
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
         transpile: [/^element-ui/],
+        /*
+            ** You can extend webpack config here
+            */
+        // analyze: true, // 使用webpack-bundle-analyzer来可视化包以及如何优化它们
+
+        babel: { // 按需加载
+            plugins: [
+                [
+                    'component',
+                    {
+                        'libraryName': 'element-ui',
+                        'styleLibraryName': 'theme-chalk'
+                    }
+                ]
+            ]
+        },
         /*
             ** You can extend webpack config here
             */

@@ -1,5 +1,6 @@
 <template>
     <div class="base">
+        <el-backtop :bottom="100"></el-backtop>
         <Nuxt />
         <Login v-if="showLogin" @close="changeClose" />
     </div>

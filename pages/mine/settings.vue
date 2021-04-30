@@ -258,7 +258,7 @@ export default {
                                     type: "success",
                                 });
                             })
-                            .catch((err) => console.log(err));
+                            .catch(() => {});
                     } else {
                         this.$message({
                             message: "用户昵称不能超过十个字~",
@@ -288,7 +288,7 @@ export default {
                                     type: "success",
                                 });
                             })
-                            .catch((err) => console.log(err));
+                            .catch(() => {});
                     }
                     break;
             }

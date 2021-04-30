@@ -149,9 +149,7 @@ export default {
                                 message: "删除成功!",
                             });
                         })
-                        .catch((err) => {
-                            console.log(err);
-                        });
+                        .catch(() => {});
                 })
                 .catch(() => {});
         },

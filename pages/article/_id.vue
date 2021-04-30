@@ -183,6 +183,11 @@ export default {
                         "优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站",
                 },
             ],
+            script: [
+                {
+                    src: "//file.youxiubiji.com/js/qrcode.min.js"
+                },
+            ],
         };
     },
     filters: {

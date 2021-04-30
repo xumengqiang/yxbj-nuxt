@@ -26,7 +26,7 @@
             <el-table-column label="操作" align="center" width="100">
                 <template slot-scope="scope">
                     <el-link
-                           type="primary"
+                        type="primary"
                         class="link"
                         :underline="false"
                         @click="
@@ -93,7 +93,7 @@
 import { cateAdd, cateList, cateEdit, cateDisable } from "api/cate";
 export default {
     name: "Cate",
-    layout:'main',
+    layout: "main",
     data() {
         return {
             list: null,
@@ -200,9 +200,7 @@ export default {
                         type: "success",
                     });
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
         /**
          * 编辑
@@ -224,9 +222,7 @@ export default {
                         type: "success",
                     });
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
     },
 };

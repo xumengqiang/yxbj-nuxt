@@ -1,5 +1,6 @@
 <template>
     <div class="base">
+        <el-backtop :bottom="100"></el-backtop>
         <NavBar />
         <div class="main">
             <Nuxt />

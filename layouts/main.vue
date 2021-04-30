@@ -1,5 +1,6 @@
 <template>
     <div class="base">
+        <el-backtop :bottom="100"></el-backtop>
         <NavBar></NavBar>
         <div class="main">
             <div class="main_lf">
@@ -13,12 +14,26 @@
             </div>
         </div>
         <Footer></Footer>
+        <Login v-if="showLogin" @close="changeClose" />
     </div>
 </template>
 
 <script>
 export default {
     name: "Fullscreen",
+    computed: {
+        showLogin() {
+            return this.$store.state.showLogin;
+        },
+    },
+    methods: {
+        changeClose() {
+            this.$store.dispatch("changeSetting", {
+                key: "showLogin",
+                value: false,
+            });
+        },
+    },
 };
 </script>
 <style lang="less" scoped>

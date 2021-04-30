@@ -192,7 +192,7 @@ import { linkAdd, linkAdminList, linkAdminEdit } from "api/link";
 import { classAll } from "api/class";
 export default {
     name: "Link-Index",
-    layout:'main',
+    layout: "main",
     data() {
         return {
             list: null,
@@ -275,9 +275,7 @@ export default {
                 .then((res) => {
                     this.classList = res.data;
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
         /**
          * 分类列表
@@ -390,9 +388,7 @@ export default {
                         type: "success",
                     });
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
         /**
          * 编辑
@@ -442,9 +438,7 @@ export default {
                         type: "success",
                     });
                 })
-                .catch((err) => {
-                    console.log(err);
-                });
+                .catch(() => {});
         },
         /**
          * 搜索

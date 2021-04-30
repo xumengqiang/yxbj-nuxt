@@ -20,13 +20,27 @@ export default async ({ redirect, route, store }) => {
         if (!hasRoles) {
             try {
                 const { roles } = await store.dispatch('getInfo')
-                store.dispatch('generateRoutes', roles)
+                const accessRoutes = await store.dispatch('generateRoutes', roles)
+                if (!accessRoutes.some(item => item.path === route.path) && (
+                    whiteList.indexOf(route.path) === -1 &&
+                    route.path.indexOf("article") === -1 &&
+                    route.path.indexOf("document") === -1
+                )) {
+                    redirect('/404')
+                }
             } catch (error) {
 
             }
         } else {
             try {
-                store.dispatch('generateRoutes', store.state.roles)
+                const accessRoutes = await store.dispatch('generateRoutes', store.state.roles)
+                if (!accessRoutes.some(item => item.path === route.path) && (
+                    whiteList.indexOf(route.path) === -1 &&
+                    route.path.indexOf("article") === -1 &&
+                    route.path.indexOf("document") === -1
+                )) {
+                    redirect('/404')
+                }
             } catch (error) {
 
             }

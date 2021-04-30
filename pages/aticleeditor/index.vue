@@ -86,7 +86,7 @@ export default {
             cateList: [],
             dialogVisible: false,
             formLabelWidth: "120px",
-            isEdit: false
+            isEdit: false,
         };
     },
     created() {
@@ -133,7 +133,7 @@ export default {
                 .then((res) => {
                     this.cateList = res.data;
                 })
-                .catch((err) => console.log(err));
+                .catch(() => {});
         },
         /**
          * 发布文章
@@ -153,7 +153,7 @@ export default {
                                     ? this.$router.go(-1)
                                     : this.$router.push("/");
                             })
-                            .catch((err) => console.log(err));
+                            .catch(() => {});
                     } else {
                         add(this.postForm)
                             .then(() => {
@@ -166,7 +166,7 @@ export default {
                                     ? this.$router.go(-1)
                                     : this.$router.push("/");
                             })
-                            .catch((err) => console.log(err));
+                            .catch(() => {});
                     }
                 } else {
                     return false;
@@ -201,7 +201,7 @@ export default {
                         document.title = title;
                     }
                 })
-                .catch((err) => console.log(err));
+                .catch(() => {});
         },
     },
 };

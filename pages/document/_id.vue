@@ -230,7 +230,7 @@ export default {
                     this.pid = res.data[0].id;
                     this.getNoteInfo();
                 })
-                .catch((err) => console.log(err));
+                .catch(() => {});
         },
         getNoteInfo() {
             notesInfo({ id: this.pid })
