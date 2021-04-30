@@ -1,6 +1,6 @@
 export const asyncRoutes = [
     {
-        path: "/editor",
+        path: "/aticleeditor",
         name: "Editor",
         meta: { title: "创建普通文章", roles: ['admin', 'editor'] },
         hidden: true
