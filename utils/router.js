@@ -62,7 +62,7 @@ export const asyncRoutes = [
         meta: { title: "全部用户", icon: "el-icon-user", roles: ['admin'] }
     },
     {
-        path: "/swiper/index",
+        path: "/swiper",
         meta: { title: "轮播图", icon: "el-icon-picture-outline", roles: ["admin"] }
     },
     {
