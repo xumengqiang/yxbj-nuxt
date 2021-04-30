@@ -11,6 +11,7 @@ export default {
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+            { name: 'baidu-site-verification', content: 'code-W8o4whg3vG' },
             { hid: "keywords", name: "keywords", content: '优秀笔记,优秀,笔记,个人博客,技术博客,博客网站,个人网站' },
             { hid: 'description', name: 'description', content: '优秀笔记,专注大前端热门技术,原创文章,分享经验心得' }
         ],

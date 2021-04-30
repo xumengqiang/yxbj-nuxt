@@ -2,7 +2,7 @@
 * 路由鉴定
 * 一些页面游客无权限访问，需要重新登陆
 */
-export default ({ redirect, route, store }) => {
+export default async ({ redirect, route, store }) => {
     const whiteList = [
         '/',
         '/technology',
@@ -16,7 +16,21 @@ export default ({ redirect, route, store }) => {
     // 用户登录的时候
     if (store.state.token) {
         // 请求申请个人信息接口 => 当有Token的时候
-        store.dispatch('getInfo')
+        const hasRoles = store.state.roles && store.state.roles.length > 0
+        if (!hasRoles) {
+            try {
+                const { roles } = await store.dispatch('getInfo')
+                store.dispatch('generateRoutes', roles)
+            } catch (error) {
+
+            }
+        } else {
+            try {
+                store.dispatch('generateRoutes', store.state.roles)
+            } catch (error) {
+
+            }
+        }
     } else {
         if (
             whiteList.indexOf(route.path) === -1 &&
