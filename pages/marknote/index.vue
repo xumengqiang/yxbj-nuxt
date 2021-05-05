@@ -50,6 +50,7 @@ import { screenAll } from "api/screen";
 import { add, update, notesEditInfo } from "api/note";
 export default {
     name: "MarkNote",
+    layout: "fullscreen",
     data() {
         return {
             postForm: {

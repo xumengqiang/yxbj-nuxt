@@ -343,7 +343,7 @@ export default {
     .avatar-box {
         flex: 0 0 auto;
         img {
-            margin: 0 15px 0 0;
+            margin: 5px 15px 0 0;
         }
     }
     .form-box {
